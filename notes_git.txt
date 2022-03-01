@@ -1,0 +1,95 @@
+- On part d'un dépôt sur github:
+https://github.com/clementlechevalier/le-platformeur-2D
+
+
+- D'abord, on se crée une paire de clés ssh:
+ssh-keygen -t rsa
+Créez un couple de clés : ssh-keygen -t rsa, utilisez pour l'instant le choix par défaut pour les 3 questions posées, ne tapez donc rien et validez simplement le choix par défaut avec Entrée. La clef privée se trouve ainsi dans ~/.ssh/id_rsa et votre clef publique est dans ~/.ssh/id_rsa.pub.
+
+
+- Il faut copier le contenu de id_rsa.pub dans github.com dans son profil:
+settings, SSH and GPG keys
+
+ # pierre@latitude: ~ < 2022_03_01__21:01:58 > [bashpid_27844 1]
+cat .ssh/id_rsa.pub 
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBsDadxWZ2z1Sx0xPapAbNwV3GF5Becbwc8VZJI6z7xMPM1hCwjtQ0hpU4ezBLzPJQVxurPBu1kBRxkaM2tT+xn40yni0UGIID0/8g4zH/1zflac09yU6Ki/DVZ32NQix++fA3F8GBXt7Ls1Ut3FRGFePY7Ho/BJUGN/BYazPzG4bHqVFAaSLGPS1nW+Ff14t93l1xzKtKfDL77Nk/pVU6j1Y57pB1wfHcwMQ6eEkFY9zXy+4TJBx5HuDBlFu09esFt/TBEWRPaoDM30bfe0nDDmKJFdQWDWZbKaT6LknV+JpYDIiGCppaR/dFVBLNwWBBwqQMI4tMizBKKCJnYjKP pierre@latitude
+
+La ligne unique contenue dans id_rsa.pub est à coller dans github.com
+
+
+- Il faut faire une photocopie du code génial de Clément sur son propre compte sur github.com: ça s'appelle un fork:
+on va dans 
+https://github.com/clementlechevalier/le-platformeur-2D
+et c'est un bouton en haut à droite
+
+
+- Il faut copier le code génial sur son ordi, en utilisant le lien ssh:
+dans github.com: bouton "Code", SSH, copier le lien, par exemple!
+git@github.com:pchg/le-platformeur-2D
+(c'est mon compte, pchg => à adapter)
+
+
+- Il faut ensuite faire parvenir tout ce code génial sur mon ordi, ça s'appelle un clone:
+git clone git@github.com:pchg/le-platformeur-2D
+
+
+
+- J'édite ensuite tout ce qu'il y a là-dedans: je modifie un féchier, j'en crée deux autres (un utilitaire et ce féchier):
+Pour voir l'état des choses, je fais un git status:
+
+ # pierre@latitude: ~/dev/le-platformeur-2D < 2022_03_01__21:09:53 > [bashpid_7244 30] [main]
+git status 
+Sur la branche main
+Votre branche est à jour avec 'origin/main'.
+
+Modifications qui ne seront pas validées :
+  (utilisez "git add <fichier>..." pour mettre à jour ce qui sera validé)
+  (utilisez "git checkout -- <fichier>..." pour annuler les modifications dans la copie de travail)
+
+        modifié :         toto.txt
+
+Fichiers non suivis:
+  (utilisez "git add <fichier>..." pour inclure dans ce qui sera validé)
+
+        fouine
+        notes_git.txt
+
+aucune modification n'a été ajoutée à la validation (utilisez "git add" ou "git commit -a")
+ # pierre@latitude: ~/dev/le-platformeur-2D < 2022_03_01__21:10:23 > [bashpid_7244 31] [main]
+
+
+- Il faut ajouter les nouveaux fontchiers: git add
+
+ # pierre@latitude: ~/dev/le-platformeur-2D < 2022_03_01__21:14:39 > [bashpid_7244 34] [main]
+git add fouine notes_git.txt 
+
+
+
+- Il faut commiter cela:
+ # pierre@latitude: ~/dev/le-platformeur-2D < 2022_03_01__21:10:23 > [bashpid_7244 31] [main]
+git commit -am "Ajout d'un utilitaire, et d'un aide-mémoire simple pour git et github"
+[main c8fa383] Ajout d'un utilitaire, et d'un aide-mémoire simple pour git et github
+ 1 file changed, 1 insertion(+)
+ # pierre@latitude: ~/dev/le-platformeur-2D < 2022_03_01__21:11:10 > [bashpid_7244 32] [main]
+
+
+
+- Une fois ça en place, je veux le remonter sur le serveur github.com, ce sera sur mon compte bien sûr:
+ # pierre@latitude: ~/dev/le-platformeur-2D < 2022_03_01__21:11:10 > [bashpid_7244 32] [main]
+git push 
+X11 forwarding request failed on channel 0
+Énumération des objets: 5, fait.
+Décompte des objets: 100% (5/5), fait.
+Compression par delta en utilisant jusqu'à 4 fils d'exécution
+Compression des objets: 100% (2/2), fait.
+Écriture des objets: 100% (3/3), 354 bytes | 354.00 KiB/s, fait.
+Total 3 (delta 0), réutilisés 0 (delta 0)
+To github.com:pchg/le-platformeur-2D
+   19370e6..c8fa383  main -> main
+ # pierre@latitude: ~/dev/le-platformeur-2D < 2022_03_01__21:12:17 > [bashpid_7244 33] [main]
+
+
+
+- C'est arrivé sur mon github.com, il faut maintenant envoyer ça chez Clément: pour ce, il faut faire une Pull Request: ça se fait dans l'interface github.com avec le gros bouton vert New Pull Request.
+
+
