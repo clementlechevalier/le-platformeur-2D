@@ -93,3 +93,14 @@ To github.com:pchg/le-platformeur-2D
 - C'est arrivé sur mon github.com, il faut maintenant envoyer ça chez Clément: pour ce, il faut faire une Pull Request: ça se fait dans l'interface github.com avec le gros bouton vert New Pull Request.
 
 
+
+
+
+Pour les deux compaires:
+	d'abord on fait un fork
+	ensuite un git pull
+	ensuite vous faites ce que vous voulez en local
+	vous faites un git status pour voir ce que vous avez fait
+	puis un git commit -am "#commentaire ou vous mettez ce que vous avez faits
+	puis git push pour mettre sur le serveur 
+	et pour finir pull request sur github
