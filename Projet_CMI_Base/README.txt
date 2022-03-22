@@ -1,1 +1,0 @@
-Projet de Titouan Guibert-Lode, Clement Chevalier et Kevin Espiguinha. Loin d'être fini évidemment, je l'exécute avec Code::Blocks mais il y a parfois des problèmes, dans ce cas je supprime des informations dans "build options"
