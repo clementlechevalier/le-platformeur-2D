@@ -12,7 +12,7 @@ TextBox::TextBox(sf::Vector2f position, sf::RectangleShape body)
     m_playfair.loadFromFile("Fonts/Playfair/PlayfairDisplay-Black.ttf");
     m_text.setFont(m_playfair);
     m_text.setCharacterSize(16);
-    m_text.setColor(sf::Color(0,0,0));
+    m_text.setFillColor(sf::Color(0,0,0));
     m_text.setPosition(position.x+12, position.y+12);
     m_text.setString("text Placeholder");
 }
