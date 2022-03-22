@@ -3,7 +3,6 @@
 #include <typeinfo>
 #include <fstream>
 #include <vector>
-#include <string>
 #include <math.h>
 #include "include/Map.h"
 #include "include/Ground.h"
@@ -11,6 +10,7 @@
 #include "include/Player.h"
 #include "include/Collider.h"
 #include "include/Fading.h"
+#include "include/ecriture_hit_box.h"
 
 
 static const float VIEW_WIDTH = 1920.0f; // defines the size of the view and the window, we might have to separate the two at some point
@@ -143,9 +143,6 @@ int main()
     int currentLevel = 0;//the current level we're in
     float view_x;//variables used to display the view
     float view_y;
-    Map level1[level1MapNumber];//a list of all map in the first level
-    getMapData("Data/000.txt", level1[0]);//we collect data for the map from getMapData
-    getMapData("Data/001.txt", level1[1]);//we collect data for the map from getMapData
 
     sf::Texture playerTexture;//creation of the player character, will have to be modified a bit
     playerTexture.loadFromFile("Sprites/Test/test.png");
@@ -155,6 +152,10 @@ int main()
     Fading fadeScreen(0.2, sf::RectangleShape(sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT)));
     while (window.isOpen())
     {
+        Map level1[level1MapNumber];//a list of all map in the first level
+        getMapData("Data/000.txt", level1[0]);//we collect data for the map from getMapData
+        getMapData("Data/001.txt", level1[1]);//we collect data for the map from getMapData
+
         deltaTime = clock.restart().asSeconds();//we get the time that took the machine to get through the whole cycle each time so we can calculate movement based on that
         if (deltaTime > 1.0f/20.0f)// we set a framerate limit from which the game will slow down
         {
@@ -166,6 +167,10 @@ int main()
         {
             if (evnt.type == sf::Event::Closed){
                 window.close();
+            }
+            if (evnt.text.unicode==111)
+            {
+                creeHitBox();
             }
             //else if (evnt.type == sf::Event::Resized){
             //    ResizeView(window, view);

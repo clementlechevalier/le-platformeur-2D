@@ -32,7 +32,7 @@ void creeHitBox(){
             break;
     }
     std::ofstream fichierText;
-    fichierText.open("hitBox.txt",std::ofstream::app);
+    fichierText.open("Data/000.txt",std::ofstream::app);
     fichierText<<laString;
 }
 
