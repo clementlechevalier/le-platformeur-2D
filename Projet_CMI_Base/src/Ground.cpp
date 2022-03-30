@@ -52,7 +52,9 @@ void Ground::Draw(sf::RenderWindow& window)
     if(m_type == 2)
         m_body.setFillColor(sf::Color::Yellow);
     if(m_type == 3)
-        m_body.setFillColor(sf::Color::Red);
+        m_body.setFillColor(sf::Color::Red);  
+    if(m_type >= 100)
+        m_body.setFillColor(sf::Color::White);
 
     window.draw(m_body);
 }
