@@ -1,15 +1,20 @@
 #include "../include/Animation.h"
 #include <SFML/Graphics.hpp>
 
-Animation::Animation(sf::Texture* texture, sf::Vector2u imageCount, float switchTime)
+Animation::Animation()
+{
+
+}
+
+Animation::Animation(sf::Texture texture, sf::Vector2u imageCount, float switchTime)
 {
     m_imageCount = imageCount;
     m_switchTime = switchTime;
     m_totalTime = 0.0f;
     m_currentImage.x = 0;
 
-    m_uvRect.width = texture->getSize().x / float(imageCount.x);
-    m_uvRect.height = texture->getSize().y / float(imageCount.y);
+    m_uvRect.width = texture.getSize().x / float(imageCount.x);
+    m_uvRect.height = texture.getSize().y / float(imageCount.y);
 }
 
 sf::IntRect Animation::getUvRect()

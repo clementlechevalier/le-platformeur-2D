@@ -14,6 +14,7 @@ class TextBox
     void Write(sf::Event evnt);
     void Erase();
     void SetString(std::string txt) {m_text.setString(txt);}
+    void SetInput(std::string txt) {m_input = txt;}
     void SetPosition(sf::Vector2f position) {m_body.setPosition(position); m_text.setPosition(position.x+12, position.y+12);}
     void setSize(sf::Vector2f dimentions) {m_body.setSize(dimentions);}
     void Select() {m_selected = true; m_body.setFillColor(sf::Color(255,255,255));}
@@ -25,11 +26,11 @@ class TextBox
     std::string GetText() {return m_input;}
 
     protected:
+    bool m_activated;
     sf::RectangleShape m_body;
     sf::Font m_playfair;
     sf::Text m_text;
     sf::String m_input;
-    bool m_activated;
     bool m_selected;
 
 
@@ -37,3 +38,4 @@ class TextBox
 };
 
 #endif // TEXTBOX_H
+

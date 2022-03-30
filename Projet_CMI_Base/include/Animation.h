@@ -7,7 +7,7 @@ class Animation//not too sure about this class I almost didn't modify it from th
 {
     public:
     Animation();
-    Animation(sf::Texture* texture, sf::Vector2u imageCount, float switchTime);
+    Animation(sf::Texture texture, sf::Vector2u imageCount, float switchTime);
     virtual ~Animation();
 
     sf::IntRect getUvRect();

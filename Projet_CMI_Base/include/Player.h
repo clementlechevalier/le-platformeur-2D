@@ -11,7 +11,7 @@
 class Player
 {
     public:
-        Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed);
+        Player();
         virtual ~Player();
         void Movement(float deltaTime);//defines all player movements depending on the inputs received
         void Update(float deltaTime);//Updates the player depending on what he did
@@ -39,7 +39,18 @@ class Player
     sf::Vector2f m_velocity;
     sf::Vector2f m_nextLocation; //when going through doors
     sf::Vector2f m_prevLocation; //for collisions
-    Animation m_animation;
+    Animation m_animationIdle;
+    Animation m_animationAttack;
+    Animation m_animationRun;
+    Animation m_animationJump;
+    Animation m_animationFall;
+    Animation m_animationJumpFall;
+    sf::Texture m_textureIdle;
+    sf::Texture m_textureAttack;
+    sf::Texture m_textureRun;
+    sf::Texture m_textureJump;
+    sf::Texture m_textureFall;
+    sf::Texture m_textureJumpFall;
     unsigned int m_row;//for animation
     unsigned int m_storageDuration;//for action storage
     int m_nextMap;//when going through doors

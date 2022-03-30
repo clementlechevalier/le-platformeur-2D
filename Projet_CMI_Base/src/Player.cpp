@@ -3,21 +3,31 @@
 #include <math.h>
 #include "../include/Player.h"
 
-Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed):
-    m_animation(texture, imageCount, switchTime)
+Player::Player()
 {
-    m_speed = speed;
+    m_textureIdle.loadFromFile("Sprites/FreeKnight/Used/_Idle.png");
+    m_animationIdle = Animation(m_textureIdle, sf::Vector2u(10, 1), 0.3f);
+    m_textureAttack.loadFromFile("Sprites/FreeKnight/Used/_AttackCombo2hit.png");
+    m_animationAttack = Animation(m_textureAttack, sf::Vector2u(10, 1), 0.3f);
+    m_textureRun.loadFromFile("Sprites/FreeKnight/Used/_Run.png");
+    m_animationRun = Animation(m_textureRun, sf::Vector2u(10, 1), 0.3f);
+    m_textureJump.loadFromFile("Sprites/FreeKnight/Used/_Jump.png");
+    m_animationJump = Animation(m_textureJump, sf::Vector2u(3, 1), 0.3f);
+    m_textureFall.loadFromFile("Sprites/FreeKnight/Used/_Fall.png");
+    m_animationFall = Animation(m_textureFall, sf::Vector2u(3, 1), 0.3f);
+    m_textureJumpFall.loadFromFile("Sprites/FreeKnight/Used/_JumpFallInbetween.png");
+    m_animationJumpFall = Animation(m_textureJumpFall, sf::Vector2u(2, 1), 0.3f);
+
+    m_speed = 500.0f;
     m_rotation = 0;
     m_row = 0;
     m_faceRight = true;
     m_texture.setSize(sf::Vector2f(100.0f, 100.0f));
-    //m_texture.setOrigin(m_texture.getSize() / 2.0f);
     m_texture.setPosition(200.0f, 200.0f);
-    m_texture.setTexture(texture);
+    m_texture.setTexture(&m_textureIdle);
     m_texture.setRotation(m_rotation);
 
     m_mainHitbox.setSize(sf::Vector2f(100.0f, 100.0f));
-    //m_mainHitbox.setOrigin(m_mainHitbox.getSize() / 2.0f);
     m_mainHitbox.setPosition(200.0f, 200.0f);
     m_mainHitbox.setRotation(m_rotation);
 
@@ -136,10 +146,21 @@ void Player::Update(float deltaTime)
     {
         m_trap -= deltaTime;
     }
-    m_animation.Update(m_row, deltaTime, m_faceRight);
-    m_texture.setTextureRect(m_animation.getUvRect());
     m_mainHitbox.move(m_velocity * deltaTime);
-    m_texture.setPosition(sf::Vector2f(m_mainHitbox.getPosition().x,m_mainHitbox.getPosition().y));
+    if(m_velocity.x == 0)
+    {
+        m_animationIdle.Update(m_row, deltaTime, m_faceRight);
+        m_texture.setTexture(&m_textureIdle);
+        m_texture.setTextureRect(m_animationIdle.getUvRect());
+        m_texture.setPosition(sf::Vector2f(m_mainHitbox.getPosition().x,m_mainHitbox.getPosition().y));
+    }
+    else if(m_velocity.x != 0)
+    {
+        m_animationRun.Update(m_row, deltaTime, m_faceRight);
+        m_texture.setTexture(&m_textureRun);
+        m_texture.setTextureRect(m_animationRun.getUvRect());
+        m_texture.setPosition(sf::Vector2f(m_mainHitbox.getPosition().x,m_mainHitbox.getPosition().y));
+    }
 }
 
 bool Player::Door(float deltaTime, int &currentMap)
@@ -230,5 +251,9 @@ void Player::Draw(sf::RenderWindow& window)
 {
     m_mainHitbox.setFillColor(sf::Color::Cyan);
     window.draw(m_mainHitbox);
-    window.draw(m_texture);
+    if(m_velocity.x == 0){
+        window.draw(m_texture);}
+    else if(m_velocity.x != 0){
+        window.draw(m_texture);}
+
 }
