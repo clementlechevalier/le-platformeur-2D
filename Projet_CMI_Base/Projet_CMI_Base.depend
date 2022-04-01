@@ -1194,3 +1194,77 @@
 	<SFML/Graphics/Drawable.hpp>
 	<SFML/Window/GlResource.hpp>
 
+1648554379 source:/sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/src/Animation.cpp
+	"../include/Animation.h"
+	<SFML/Graphics.hpp>
+
+1648724018 /sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/include/Animation.h
+	<SFML/Graphics.hpp>
+
+1648754265 source:/sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/src/Collider.cpp
+	"../include/Collider.h"
+	<SFML/Graphics.hpp>
+	<iostream>
+	<math.h>
+
+1648579970 /sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/include/Collider.h
+	<SFML/Graphics.hpp>
+	<math.h>
+
+1645533256 source:/sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/src/Fading.cpp
+	"../include/Fading.h"
+	<math.h>
+	<iostream>
+
+1645532938 /sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/include/Fading.h
+	<SFML/Graphics.hpp>
+
+1648715315 source:/sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/src/Ground.cpp
+	"../include/Ground.h"
+	<iostream>
+	<math.h>
+
+1646128488 /sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/include/Ground.h
+	"Collider.h"
+	<SFML/Graphics.hpp>
+
+1645547868 source:/sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/src/Hitbox.cpp
+	"../include/Hitbox.h"
+	<SFML/Graphics.hpp>
+
+1645547104 /sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/include/Hitbox.h
+	<SFML/Graphics.hpp>
+
+1645378336 source:/sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/src/Map.cpp
+	"../include/Map.h"
+	<iostream>
+
+1645466224 /sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/include/Map.h
+	"Ground.h"
+	<vector>
+
+1648755626 source:/sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/src/main.cpp
+	<SFML/Graphics.hpp>
+	<iostream>
+	<typeinfo>
+	<fstream>
+	<vector>
+	<math.h>
+	"../include/Map.h"
+	"../include/Ground.h"
+	"../include/Animation.h"
+	"../include/Player.h"
+	"../include/Collider.h"
+	"../include/Fading.h"
+
+1648755206 /sda4/home_of_sda2/titouan/Documents/code/git/le-platformeur-2D/Projet_CMI_Base/include/Player.h
+	<SFML/Graphics.hpp>
+	<iostream>
+	<typeinfo>
+	<math.h>
+	<vector>
+	"Animation.h"
+	"Collider.h"
+	<fstream>
+	<vector>
+

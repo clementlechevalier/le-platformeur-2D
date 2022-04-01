@@ -20,7 +20,7 @@ Player::Player()
     m_textureHurt.loadFromFile("Sprites/FreeKnight/Used/_Hit.png");
     m_animationHurt = Animation(m_textureHurt, sf::Vector2u(1, 1), 0.5f);
 
-    m_speed = 500.0f;
+    m_speed = 400.0f;
     m_attacking = 0;
     m_scale = 2;
     m_rotation = 0;
@@ -251,7 +251,7 @@ void Player::Inputs(float deltaTime)
     }
     else
     {
-        if(m_attackDuration <= 0)
+        if(m_animationAttack.getCurrentImage() == 0 || m_animationAttack.getCurrentImage() == 5 )
         {
             if(m_velocity.x > 0.0f){
                 if(!m_faceRight){
