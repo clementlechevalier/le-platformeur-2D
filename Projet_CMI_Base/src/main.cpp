@@ -10,7 +10,7 @@
 #include "../include/Player.h"
 #include "../include/Collider.h"
 #include "../include/Fading.h"
-
+#include "../include/MainMenu.h"
 
 static const float VIEW_WIDTH = 1920.0f; // defines the size of the view and the window, we might have to separate the two at some point
 static const float VIEW_HEIGHT = 1080.0f;
@@ -142,78 +142,190 @@ simple drawAll function where we will draw every entities that needs to be drawn
 
 int main()
 {
-    float deltaTime = 0.0f;//used so that any machine runs the game at the same speed but is the source of some bugs when not handled carefully
-    sf::Clock clock;
+    RenderWindow window(VideoMode(VIEW_WIDTH, VIEW_HEIGHT), "Pastis World", Style::Default);
+    MainMenu mainMenu(window.getSize().x, window.getSize().y);
 
-    sf::Vector2f direction;//will be changed, is currently the player direction
-    sf::RenderWindow window(sf::VideoMode(VIEW_WIDTH, VIEW_HEIGHT), "Pastis World"); //creation of the window and the view
-    sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT));
+    RectangleShape background;
+    background.setSize(Vector2f(VIEW_WIDTH, VIEW_HEIGHT));
+    Texture Maintexture;
+    Maintexture.loadFromFile("Textures/610766.jpg");
+    background.setTexture(&Maintexture);
+    
 
-
-    int const level1MapNumber = 2;//number of map in the first level
-    int currentLevel = 0;//the current level we're in
-    float view_x;//variables used to display the view
-    float view_y;
-    Map level1[level1MapNumber];//a list of all map in the first level
-    getMapData("Data/000.txt", level1[0]);//we collect data for the map from getMapData
-    getMapData("Data/001.txt", level1[1]);//we collect data for the map from getMapData
-
-    Player player;
-    player.SetPosition(sf::Vector2f(1000, 0));
-
-    Fading fadeScreen(0.2, sf::RectangleShape(sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT)));
     while (window.isOpen())
     {
-        deltaTime = clock.restart().asSeconds();//we get the time that took the machine to get through the whole cycle each time so we can calculate movement based on that
-        if (deltaTime > 1.0f/20.0f)// we set a framerate limit from which the game will slow down
+        Event event;
+        while (window.pollEvent(event))
         {
-            deltaTime = 1.0f/20.0f;
-        }
-
-        sf::Event evnt;
-        while (window.pollEvent(evnt))//check what events are called
-        {
-            if (evnt.type == sf::Event::Closed){
+            if (event.type == Event::Closed)
+            {
                 window.close();
             }
-            //else if (evnt.type == sf::Event::Resized){
-            //    ResizeView(window, view);
-            //}
-            //player.EventStorage(evnt);//not used anymore
-        }
-
-        player.Inputs(deltaTime);//the character updates depending on the player inputs
-        if(player.Door(deltaTime, currentLevel) || player.GetTrap() > 0.3)//handle doors and trap events
-        {
-            fadeScreen.Fade(deltaTime);
-        }
-        else if (player.GetTrap() >= 0.2 && player.GetTrap() <= 0.3)
-        {
-            player.SetPosition(player.GetNextLocation());
-        }
-        else
-        {
-            fadeScreen.UnFade(deltaTime);
-            if (player.GetTrap() > 0 && player.GetTrap() <= 0.1)
+            if (event.type == Event::KeyReleased)
             {
-                player.Freed();
+                if (event.key.code == Keyboard::Up)
+                {
+                    mainMenu.MoveUp();
+                    break;
+                }
+                if (event.key.code == Keyboard::Down)
+                {
+                    mainMenu.MoveDown();
+                    break;
+                }
+                if (event.key.code == Keyboard::Return){
+                    RenderWindow OPTIONS(VideoMode(960, 720), "Options");
+                    RenderWindow ABOUT(VideoMode(960, 720), "ABOUT");
+
+                    int x = mainMenu.MainMenuPressed();
+                    if (x == 0){
+                        while (window.isOpen())
+                        {
+                            Event aevent;
+                            while (window.pollEvent(aevent)){
+                                if (aevent.type == Event::Closed)
+                                {
+                                    window.close();
+                                }
+                                if (aevent.type == Event::KeyPressed)
+                                {
+                                    if (aevent.key.code == Keyboard::Escape)
+                                    {
+                                        window.close();
+                                    }
+                                }
+                            }
+                            OPTIONS.close();
+                            ABOUT.close();
+                            window.clear();
+                            
+                            float deltaTime = 0.0f;//used so that any machine runs the game at the same speed but is the source of some bugs when not handled carefully
+                            sf::Clock clock;
+
+                            sf::Vector2f direction;//will be changed, is currently the player direction
+                            sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT));
+
+
+                            int const level1MapNumber = 2;//number of map in the first level
+                            int currentLevel = 0;//the current level we're in
+                            float view_x;//variables used to display the view
+                            float view_y;
+                            Map level1[level1MapNumber];//a list of all map in the first level
+                            getMapData("Data/000.txt", level1[0]);//we collect data for the map from getMapData
+                            getMapData("Data/001.txt", level1[1]);//we collect data for the map from getMapData
+
+                            Player player;
+                            player.SetPosition(sf::Vector2f(1000, 0));
+
+                            Fading fadeScreen(0.2, sf::RectangleShape(sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT)));
+                            while (window.isOpen())
+                            {
+                                deltaTime = clock.restart().asSeconds();//we get the time that took the machine to get through the whole cycle each time so we can calculate movement based on that
+                                if (deltaTime > 1.0f/20.0f)// we set a framerate limit from which the game will slow down
+                                {
+                                    deltaTime = 1.0f/20.0f;
+                                }
+
+                                sf::Event evnt;
+                                while (window.pollEvent(evnt))//check what events are called
+                                {
+                                    if (evnt.type == sf::Event::Closed){
+                                        window.close();
+                                    }
+                                    //else if (evnt.type == sf::Event::Resized){
+                                    //    ResizeView(window, view);
+                                    //}
+                                    //player.EventStorage(evnt);//not used anymore
+                                }
+
+                                player.Inputs(deltaTime);//the character updates depending on the player inputs
+                                if(player.Door(deltaTime, currentLevel) || player.GetTrap() > 0.3)//handle doors and trap events
+                                {
+                                    fadeScreen.Fade(deltaTime);
+                                }
+                                else if (player.GetTrap() >= 0.2 && player.GetTrap() <= 0.3)
+                                {
+                                    player.SetPosition(player.GetNextLocation());
+                                }
+                                else
+                                {
+                                    fadeScreen.UnFade(deltaTime);
+                                    if (player.GetTrap() > 0 && player.GetTrap() <= 0.1)
+                                    {
+                                        player.Freed();
+                                    }
+                                }
+
+
+                                view_x = std::min(level1[currentLevel].GetMapSize().x-VIEW_WIDTH/2  , std::max(player.GetPosition().x, VIEW_WIDTH/2));//the view must only show the inside of a map so we set boundaries here
+                                view_y = std::min(level1[currentLevel].GetMapSize().y-VIEW_HEIGHT/2, std::max(player.GetPosition().y, VIEW_HEIGHT/2));
+                                view.setCenter(view_x, view_y);//and set the view center
+                                window.setView(view);
+
+
+                                window.clear(sf::Color(150,150,150));//we then refresh the window and redraw everything
+                                updateAll(deltaTime,player);
+                                checkAllCollisions(player, direction, level1[currentLevel], currentLevel, window);
+
+                                drawAll(window, player, fadeScreen, level1[currentLevel], view);
+                                window.display();
+                            }
+
+                            return 0;
+                        }
+                    }
+                    if (x == 1)
+                    {
+                        while (OPTIONS.isOpen())
+                        {
+                            Event aevent;
+                            while (OPTIONS.pollEvent(aevent)){
+                                if (aevent.type == Event::Closed)
+                                {
+                                    OPTIONS.close();
+                                }
+                                if (aevent.type == Event::KeyPressed){
+                                    if (aevent.key.code == Keyboard::Escape)
+                                    {
+                                        OPTIONS.close();
+                                    }
+                                }
+                            }
+                            window.close();
+                            OPTIONS.clear();
+                            ABOUT.close();
+                            OPTIONS.display();
+                        }
+                    }
+                    if (x == 2){
+                        while (ABOUT.isOpen()){
+                            Event aevent;
+                            while (ABOUT.pollEvent(aevent)){
+                                if (aevent.type == Event::Closed)
+                                {
+                                    ABOUT.close();
+                                }
+                                if (aevent.type == Event::KeyPressed) {
+                                    if (aevent.key.code == Keyboard::Escape){
+                                        ABOUT.close();
+                                    }
+                                }
+                            }
+                            window.close();
+                            OPTIONS.close();
+                            ABOUT.clear();
+                            ABOUT.display();
+                        }
+                    }
+                    if (x == 3)
+                        window.close();
+                    break;
+                }
             }
         }
-
-
-        view_x = std::min(level1[currentLevel].GetMapSize().x-VIEW_WIDTH/2  , std::max(player.GetPosition().x, VIEW_WIDTH/2));//the view must only show the inside of a map so we set boundaries here
-        view_y = std::min(level1[currentLevel].GetMapSize().y-VIEW_HEIGHT/2, std::max(player.GetPosition().y, VIEW_HEIGHT/2));
-        view.setCenter(view_x, view_y);//and set the view center
-        window.setView(view);
-
-
-        window.clear(sf::Color(150,150,150));//we then refresh the window and redraw everything
-        updateAll(deltaTime,player);
-        checkAllCollisions(player, direction, level1[currentLevel], currentLevel, window);
-
-        drawAll(window, player, fadeScreen, level1[currentLevel], view);
+        window.clear();
+        window.draw(background);
+        mainMenu.draw(window);
         window.display();
     }
-
-    return 0;
 }
