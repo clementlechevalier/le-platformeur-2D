@@ -3,7 +3,7 @@
 
 std::vector<int> positionMouse();
 void affichRect(std::vector<std::vector<int>> *);
-void modifHitBox(std::vector<std::vector<int>> *){
+void modifHitBox(std::vector<std::vector<int>> *);
 
 void creeHitBox(std::vector<std::vector<int>> *);
 /**quand cette fonction est appelée,

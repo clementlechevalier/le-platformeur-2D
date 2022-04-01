@@ -1,13 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "ecriture_hit_box.h"
+#include <vector>
+#include <SFML/Graphics.hpp>
+#include "../include/ecriture_hit_box.h"
 
 std::vector<int> positionMouse(){
     while(sf::Mouse::isButtonPressed(sf::Mouse::Left)==0){
     }
     std::cout<<sf::Mouse::getPosition().x<<" "<<sf::Mouse::getPosition().y<<"\n";
-        return std::vector<int>(sf::Mouse::getPosition().x,sf::Mouse::getPosition().y);
+    return std::vector<int>(sf::Mouse::getPosition().x,sf::Mouse::getPosition().y);
 }
 
 
