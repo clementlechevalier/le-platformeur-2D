@@ -12,8 +12,8 @@ TextBox::TextBox(sf::Vector2f position, sf::RectangleShape body)
     m_playfair.loadFromFile("Fonts/Playfair/PlayfairDisplay-Black.ttf");
     m_text.setFont(m_playfair);
     m_text.setCharacterSize(16);
-    m_text.setPosition(position.x+12, position.y+12);
     m_text.setFillColor(sf::Color(0,0,0));
+    m_text.setPosition(position.x+12, position.y+12);
     m_text.setString("text Placeholder");
 }
 
@@ -59,9 +59,9 @@ void TextBox::Write(sf::Event evnt)
 
 void TextBox::Erase()
 {
-    if (m_input.size()>=1 && m_selected)
+    if (m_input.getSize()>=1 && m_selected)
     {
-        m_input.erase(m_input.size()-1,1);
+        m_input.erase(m_input.getSize()-1,1);
         m_text.setString(m_input);
     }
 }

@@ -4,13 +4,12 @@
 #include <fstream>
 #include <vector>
 #include <math.h>
-#include "include/Map.h"
-#include "include/Ground.h"
-#include "include/Animation.h"
-#include "include/Player.h"
-#include "include/Collider.h"
-#include "include/Fading.h"
-#include "include/ecriture_hit_box.h"
+#include "../include/Map.h"
+#include "../include/Ground.h"
+#include "../include/Animation.h"
+#include "../include/Player.h"
+#include "../include/Collider.h"
+#include "../include/Fading.h"
 
 
 static const float VIEW_WIDTH = 1920.0f; // defines the size of the view and the window, we might have to separate the two at some point
@@ -85,24 +84,35 @@ collision.
 */
 {
     Collider playerCollider =player.GetCollider();
+    std::vector<Collider> playerColliders =player.GetColliders();
 
     bool playerColliding = false;
     for(unsigned int i=0; i < mapping.m_levelGrounds.size(); i++)
     {
         if (mapping.m_levelGrounds[i].GetCollider().CheckCollision(playerCollider, direction, window))
         {
-            if (mapping.m_levelGrounds[i].GetType() ==1)
+            for(int j = 0; j < (int)playerColliders.size() ; j++)
             {
-                player.OnCollision(direction);
-                playerColliding = true;
-            }
-            if (mapping.m_levelGrounds[i].GetType() ==2)
-            {
-                player.GoThroughDoor(mapping.m_levelGrounds[i].GetNextLocation(), mapping.m_levelGrounds[i].GetNextDirection(), mapping.m_levelGrounds[i].GetNextMap());
-            }
-            if (mapping.m_levelGrounds[i].GetType() ==3)
-            {
-                player.Trapped(mapping.m_levelGrounds[i].GetNextLocation());
+                if (mapping.m_levelGrounds[i].GetCollider().CheckCollision(playerColliders[j], direction, window))
+                {
+                    //std::cout << playerColliders[0].GetPreviousPosition().x << " " << playerColliders[0].GetPosition().x << std::endl;
+                    if (mapping.m_levelGrounds[i].GetType() ==1)
+                    {
+                        sf::Vector2f offset = mapping.m_levelGrounds[i].GetCollider().Repel(playerColliders[j], direction);
+                        player.SetPosition(player.GetPosition()-offset);
+                        player.OnCollision(direction);
+                        playerColliding = true;
+                    }
+                    if (mapping.m_levelGrounds[i].GetType() ==2)
+                    {
+                        player.GoThroughDoor(mapping.m_levelGrounds[i].GetNextLocation(), mapping.m_levelGrounds[i].GetNextDirection(), mapping.m_levelGrounds[i].GetNextMap());
+                    }
+                    if (mapping.m_levelGrounds[i].GetType() ==3)
+                    {
+                        player.GetHit();
+                        player.Trapped(mapping.m_levelGrounds[i].GetNextLocation());
+                    }
+                }
             }
         }
     }
@@ -112,13 +122,16 @@ collision.
         }
 }
 
+void updateAll(float deltatime, Player &player)
+{
+    player.Update(deltatime);
+}
 
 void drawAll(sf::RenderWindow& window, Player &player, Fading &fadeScreen, Map &mapping, sf::View view)
 /*
 simple drawAll function where we will draw every entities that needs to be drawn on the window
 */
 {
-
     for(unsigned int i=0; i < mapping.m_levelGrounds.size(); i++)
     {
         mapping.m_levelGrounds[i].Draw(window);
@@ -135,27 +148,22 @@ int main()
     sf::Vector2f direction;//will be changed, is currently the player direction
     sf::RenderWindow window(sf::VideoMode(VIEW_WIDTH, VIEW_HEIGHT), "Pastis World"); //creation of the window and the view
     sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT));
-    //sf::Keyboard::Key key_left = sf::Keyboard::Key::Q;
-    //sf::Keyboard::Key key_right = sf::Keyboard::Key::D;
 
 
     int const level1MapNumber = 2;//number of map in the first level
     int currentLevel = 0;//the current level we're in
     float view_x;//variables used to display the view
     float view_y;
+    Map level1[level1MapNumber];//a list of all map in the first level
+    getMapData("Data/000.txt", level1[0]);//we collect data for the map from getMapData
+    getMapData("Data/001.txt", level1[1]);//we collect data for the map from getMapData
 
-    sf::Texture playerTexture;//creation of the player character, will have to be modified a bit
-    playerTexture.loadFromFile("Sprites/Test/test.png");
-    Player player(&playerTexture, sf::Vector2u(3,1), 0.3f, 500.0f);
+    Player player;
     player.SetPosition(sf::Vector2f(1000, 0));
 
     Fading fadeScreen(0.2, sf::RectangleShape(sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT)));
     while (window.isOpen())
     {
-        Map level1[level1MapNumber];//a list of all map in the first level
-        getMapData("Data/000.txt", level1[0]);//we collect data for the map from getMapData
-        getMapData("Data/001.txt", level1[1]);//we collect data for the map from getMapData
-
         deltaTime = clock.restart().asSeconds();//we get the time that took the machine to get through the whole cycle each time so we can calculate movement based on that
         if (deltaTime > 1.0f/20.0f)// we set a framerate limit from which the game will slow down
         {
@@ -168,17 +176,13 @@ int main()
             if (evnt.type == sf::Event::Closed){
                 window.close();
             }
-            if (evnt.text.unicode==111)
-            {
-                creeHitBox();
-            }
             //else if (evnt.type == sf::Event::Resized){
             //    ResizeView(window, view);
             //}
             //player.EventStorage(evnt);//not used anymore
         }
 
-        player.Movement(deltaTime);//the character updates depending on the player inputs
+        player.Inputs(deltaTime);//the character updates depending on the player inputs
         if(player.Door(deltaTime, currentLevel) || player.GetTrap() > 0.3)//handle doors and trap events
         {
             fadeScreen.Fade(deltaTime);
@@ -204,9 +208,10 @@ int main()
 
 
         window.clear(sf::Color(150,150,150));//we then refresh the window and redraw everything
-        drawAll(window, player, fadeScreen, level1[currentLevel], view);
+        updateAll(deltaTime,player);
         checkAllCollisions(player, direction, level1[currentLevel], currentLevel, window);
 
+        drawAll(window, player, fadeScreen, level1[currentLevel], view);
         window.display();
     }
 
