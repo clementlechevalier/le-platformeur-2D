@@ -4,8 +4,10 @@
 #include <math.h>
 
 
-Collider::Collider(sf::RectangleShape& body, float radius, float rotation, int type, bool active, sf::Vector2f prevLocation): m_body(body), m_radius(radius), m_rotation(rotation*(M_PI/180)), m_active(active), m_prevLocation(prevLocation)
+
+Collider::Collider(sf::RectangleShape &body, int type, bool active, sf::Vector2f prevLocation): m_body(body), m_active(active), m_prevLocation(prevLocation)
 {
+    m_radius=sqrt(pow(body.getSize().x ,2) + pow(body.getSize().y ,2))/2;
     if(m_prevLocation == sf::Vector2f(-10000,-10000))
     {
         m_prevLocation = body.getPosition();
@@ -191,64 +193,89 @@ bool Collider::CheckCollision(Collider& other, sf::Vector2f& direction, sf::Rend
         cumulativeTotalProjections[2] = std::max(abs(otherAxisXPoints[0]-otherAxisXPoints[3]),abs(otherAxisXPoints[1]-otherAxisXPoints[2]));
         cumulativeTotalProjections[3] = std::max(abs(otherAxisYPoints[0]-otherAxisYPoints[3]),abs(otherAxisYPoints[1]-otherAxisYPoints[2]));
 
-        bool verif = cumulativeTotalProjections[0] < thisTotalProjections[0] + otherTotalProjections[0] && cumulativeTotalProjections[1] < thisTotalProjections[1] + otherTotalProjections[1]
-                    && cumulativeTotalProjections[2] < thisTotalProjections[2] + otherTotalProjections[2] && cumulativeTotalProjections[3] < thisTotalProjections[3] + otherTotalProjections[3];
+        bool verif = cumulativeTotalProjections[0] <= thisTotalProjections[0] + otherTotalProjections[0] && cumulativeTotalProjections[1] <= thisTotalProjections[1] + otherTotalProjections[1]
+                    && cumulativeTotalProjections[2] <= thisTotalProjections[2] + otherTotalProjections[2] && cumulativeTotalProjections[3] <= thisTotalProjections[3] + otherTotalProjections[3];
 
         //std::cout << (bool)(cumulativeTotalProjections[0] < thisTotalProjections[0]+ otherTotalProjections[0])
         //            <<(bool)(cumulativeTotalProjections[1] < thisTotalProjections[1] + otherTotalProjections[1])
         //            <<(bool)(cumulativeTotalProjections[2] < thisTotalProjections[2] + otherTotalProjections[2])
         //            <<(bool)(cumulativeTotalProjections[3] < thisTotalProjections[3] + otherTotalProjections[3])<< std::endl;
         //std::cout << cumulativeTotalProjections[0] << ", "<< cumulativeTotalProjections[1] << ", "<< cumulativeTotalProjections[2] << ", "<< cumulativeTotalProjections[3] << std::endl;
-        if (verif && m_active)
-        {
-            Repel(other, direction);
-        }
-
         return verif;
     }
     return false;
 }
 
-void Collider::Repel(Collider& other, sf::Vector2f& direction)
+sf::Vector2f Collider::Repel(Collider other, sf::Vector2f& direction)
 {
-    sf::Vector2f otherHalfSize = other.GetSize()/2.0f;
-    sf::Vector2f otherPosition = other.GetPosition()+otherHalfSize;
-    sf::Vector2f thisHalfSize = GetSize()/2.0f;
-    sf::Vector2f thisPosition = GetPosition()+thisHalfSize;
-
-    float deltaX = otherPosition.x - thisPosition.x;
-    float deltaY = otherPosition.y - thisPosition.y;
-
-    float intersectX = abs(deltaX) - (otherHalfSize.x + thisHalfSize.x);
-    float intersectY = abs(deltaY) - (otherHalfSize.y + thisHalfSize.y);
-
-    if (intersectX < 0.0f && intersectY < 0.0f)
+    sf::Vector2f Offset = sf::Vector2f(0.0f, 0.0f);
+    if(m_active)
     {
-        if (other.GetPreviousPosition().y + other.GetSize().y <= GetPosition().y)//other collide on it's bottom
+        sf::Vector2f otherHalfSize = other.GetSize()/2.0f;
+        sf::Vector2f otherPosition = other.GetPosition()+otherHalfSize;
+        sf::Vector2f thisHalfSize = GetSize()/2.0f;
+        sf::Vector2f thisPosition = GetPosition()+thisHalfSize;
+
+        float deltaX = otherPosition.x - thisPosition.x;
+        float deltaY = otherPosition.y - thisPosition.y;
+
+        float intersectX = abs(deltaX) - (otherHalfSize.x + thisHalfSize.x);
+        float intersectY = abs(deltaY) - (otherHalfSize.y + thisHalfSize.y);
+        if (intersectX < 0.0f && intersectY <= 0.0f)
         {
-            other.SetPosition(other.GetPosition().x, GetPosition().y-other.GetSize().y);
-            direction.x = 0.0f;
-            direction.y = -1.0f;
-        }
-        else if (other.GetPreviousPosition().y >= GetPosition().y+GetSize().y)//other collide on it's top
-        {
-            other.SetPosition(other.GetPosition().x, GetPosition().y + GetSize().y);
-            direction.x = 0.0f;
-            direction.y = 1.0f;
-        }
-        else if (other.GetPreviousPosition().x + other.GetSize().x <= GetPosition().x)//other collide on it's right
-        {
-            other.SetPosition(GetPosition().x-other.GetSize().x, other.GetPosition().y);
-            direction.x = 1.0f;
-            direction.y = 0.0f;
-        }
-        else if (other.GetPreviousPosition().x >= GetPosition().x+GetSize().x)//other collide on it's left
-        {
-            other.SetPosition(GetPosition().x+GetSize().x, other.GetPosition().y);
-            direction.x = -1.0f;
-            direction.y = 0.0f;
+            if (other.GetPreviousPosition().y + other.GetSize().y <= GetPosition().y)//other collide on it's bottom
+            {
+                Offset.y =  other.GetPosition().y -(GetPosition().y-other.GetSize().y);
+                //other.SetPosition(other.GetPosition().x, GetPosition().y-other.GetSize().y);
+                direction.x = 0.0f;
+                direction.y = -1.0f;
+            }
+            else if (other.GetPreviousPosition().y >= GetPosition().y+GetSize().y)//other collide on it's top
+            {
+                Offset.y = other.GetPosition().y-(GetPosition().y + GetSize().y);
+                //other.SetPosition(other.GetPosition().x, GetPosition().y + GetSize().y);
+                direction.x = 0.0f;
+                direction.y = 1.0f;
+            }
+            else if (other.GetPreviousPosition().x + other.GetSize().x <= GetPosition().x)//other collide on it's right
+            {
+                Offset.x = other.GetPosition().x - (GetPosition().x-other.GetSize().x);
+                //other.SetPosition(GetPosition().x-other.GetSize().x, other.GetPosition().y);
+                direction.x = 1.0f;
+                direction.y = 0.0f;
+            }
+            else if (other.GetPreviousPosition().x >= GetPosition().x+GetSize().x)//other collide on it's left
+            {
+                Offset.x = other.GetPosition().x - (GetPosition().x+GetSize().x);
+                //other.SetPosition(GetPosition().x+GetSize().x, other.GetPosition().y);
+                direction.x = -1.0f;
+                direction.y = 0.0f;
+            }
+            else if (intersectX > intersectY)
+            {
+                if (deltaX > 0.0f)
+                {
+                    Offset.x = intersectX;
+                }
+                else
+                {
+                    Offset.x = -intersectX;
+                }
+            }
+            else
+            {
+                if (deltaY > 0.0f)
+                {
+                    Offset.y = intersectY;
+                }
+                else
+                {
+                    Offset.y = -intersectY;
+                }
+            }
         }
     }
+    return Offset;
 }
 
 Collider::~Collider()

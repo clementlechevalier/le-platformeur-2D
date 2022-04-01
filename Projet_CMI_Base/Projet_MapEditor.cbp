@@ -40,7 +40,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-DSFML_STATIC" />
-			<Add directory="/usr/include/SFML" />
+			<Add directory="../SFML-2.5.1/include" />
 		</Compiler>
 		<Linker>
 			<Add library="sfml-graphics" />
@@ -48,7 +48,7 @@
 			<Add library="sfml-network" />
 			<Add library="sfml-window" />
 			<Add library="sfml-system" />
-			<Add directory="/usr/lib" />
+			<Add directory="../SFML-2.5.1/lib" />
 		</Linker>
 		<Unit filename="include/Animation.h" />
 		<Unit filename="include/Collider.h" />
@@ -57,6 +57,8 @@
 		<Unit filename="include/Hitbox.h" />
 		<Unit filename="include/Map.h" />
 		<Unit filename="include/Player.h" />
+		<Unit filename="include/ecriture_hit_box.h" />
+		<Unit filename="main _mapEditor.cpp" />
 		<Unit filename="src/Animation.cpp" />
 		<Unit filename="src/Collider.cpp" />
 		<Unit filename="src/Fading.cpp" />
@@ -64,10 +66,7 @@
 		<Unit filename="src/Hitbox.cpp" />
 		<Unit filename="src/Map.cpp" />
 		<Unit filename="src/Player.cpp" />
-		<Unit filename="src/main.cpp" />
-		<Extensions>
-			<code_completion />
-			<debugger />
-		</Extensions>
+		<Unit filename="src/ecriture_hit_box.cpp" />
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

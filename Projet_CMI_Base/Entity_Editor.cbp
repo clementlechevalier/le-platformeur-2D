@@ -53,6 +53,9 @@
 		<Unit filename="src/Button.cpp" />
 		<Unit filename="src/TextBox.cpp" />
 		<Unit filename="src/main_entityEditor.cpp" />
-		<Extensions />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

@@ -360,7 +360,6 @@ void importFromFile(std::vector<std::vector<std::vector<std::vector<int>>>> &hit
 
 int main()
 {
-
     bool working=false;
     sf::RenderWindow window(sf::VideoMode(VIEW_WIDTH, VIEW_HEIGHT), "Entity Editor"); //creation of the window and the view
     std::vector<std::vector<std::vector<std::vector<int>>>> hitboxes;//the first level of table is all the ligns of hitboxes. The second level is all the columns. The third level is all the hitboxes and inside is the fourth level :

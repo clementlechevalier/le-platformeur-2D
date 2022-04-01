@@ -11,6 +11,8 @@ class Animation//not too sure about this class I almost didn't modify it from th
     virtual ~Animation();
 
     sf::IntRect getUvRect();
+    int getCurrentImage(){return m_currentImage.x;}
+    void SetCurrentImage(int x){m_currentImage.x = x;}
     void Update(int row, float deltaTime, bool faceRight);
 
     protected:

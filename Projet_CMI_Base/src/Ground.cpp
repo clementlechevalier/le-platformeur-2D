@@ -42,7 +42,6 @@ Ground::Ground(sf::Vector2f size, sf::Vector2f position, int type, int destinati
 
 void Ground::GetInfo()
 {
-    std::cout << "size=" << m_body.getSize().x << "/"<< m_body.getSize().y <<", position=" << m_body.getPosition().x << "/"<< m_body.getPosition().y <<", type=" << m_type << std::endl;
 }
 
 void Ground::Draw(sf::RenderWindow& window)
@@ -52,9 +51,7 @@ void Ground::Draw(sf::RenderWindow& window)
     if(m_type == 2)
         m_body.setFillColor(sf::Color::Yellow);
     if(m_type == 3)
-        m_body.setFillColor(sf::Color::Red);  
-    if(m_type >= 100)
-        m_body.setFillColor(sf::Color::White);
+        m_body.setFillColor(sf::Color::Red);
 
     window.draw(m_body);
 }
@@ -63,11 +60,11 @@ Collider Ground::GetCollider()
 {
     if (m_type == 1)
     {
-    return Collider(m_body,sqrt(pow(m_body.getSize().x ,2)+ pow(m_body.getSize().y ,2))/2, m_rotation);
+    return Collider(m_body);
     }
     else
     {
-        return Collider(m_body,sqrt(pow(m_body.getSize().x,2) + pow(m_body.getSize().y,2))/2,0, 1 ,false);
+        return Collider(m_body, 1 ,false);
     }
 }
 
