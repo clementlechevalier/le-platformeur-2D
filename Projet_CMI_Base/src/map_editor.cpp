@@ -15,6 +15,7 @@
 
 std::vector<std::vector<int>> HITBOX;
 
+
 static const float VIEW_WIDTH = 1920.0f; // defines the size of the view and the window, we might have to separate the two at some point
 static const float VIEW_HEIGHT = 1080.0f;
 
@@ -25,72 +26,6 @@ void ResizeView(const sf::RenderWindow & window, sf::View& view)
        view.setSize(VIEW_WIDTH * aspectRatio, VIEW_WIDTH);
 }
 
-void getMapData2(std::string txtName, Map &mapping,std::vector<std::vector<int>> *vect)
-/*
-@txtName -> name and address of the text file containing the map data
-@mapping -> Map object where we will store the map data
-
-the first two words are the width and height of the map, we take them separately from the rest
-then we get every info 5 by 5 to add the platforms the infos are :
-width, height, position x, position y, platform type
-then we store it in the Map object
-*/
-{
-    std::ifstream monFlux(txtName);
-    std::vector<int> numbers;
-    float number;
-
-    for(int i=0; i < 2; i++)
-    {
-    monFlux >> number;
-    numbers.push_back(number);
-    }
-    mapping.SetMapSize(numbers[0], numbers[1]);
-    numbers.resize(0);
-
-    while(monFlux >> number)
-    {
-        numbers.push_back(number);
-        if (numbers.size()>= 5)
-        {
-            if (numbers[4]%100 == 1 )//type 1 means we're dealing with a regular platform
-            {
-                Ground platform(sf::Vector2f(numbers[0], numbers[1]), sf::Vector2f(numbers[2], numbers[3]), (int)numbers[4]);
-                mapping.AddGround(platform);
-                (*vect).push_back(numbers);
-                numbers.resize(0);
-            }
-            else if (numbers[4]%100 ==2 && numbers.size() == 9) //type 2 means we're dealing with a door so we have more parameters
-                // the new parameters are : 1-the index of the map we're heading 2-the direction 3-4- the location
-            {
-                Ground platform(sf::Vector2f(numbers[0], numbers[1]), sf::Vector2f(numbers[2], numbers[3]), (int)numbers[4], (int)numbers[5], numbers[6], sf::Vector2f(numbers[7], numbers[8]));
-                mapping.AddGround(platform);
-                (*vect).push_back(numbers);
-                numbers.resize(0);
-            }
-            else if (numbers[4]%100 ==3 && numbers.size() == 7) //type 3 means we're dealing with a trap so we have more parameters
-                // the new parameters are 1-2- the location
-            {
-                Ground platform(sf::Vector2f(numbers[0], numbers[1]), sf::Vector2f(numbers[2], numbers[3]), (int)numbers[4], sf::Vector2f(numbers[5], numbers[6]));
-                mapping.AddGround(platform);
-                (*vect).push_back(numbers);
-                numbers.resize(0);
-            }
-        }
-    }
-}
-
-void ecritDansTxt(std::string nom,std::vector<std::vector<int>>* vect){
-    std::fstream fichier;
-    fichier.open(nom,std::ios::out);
-    for(int i=0;i<(*vect).size();i++){
-        for(int a=0;(*vect)[i].size();a++){
-            fichier<<std::to_string((*vect)[i][a]);
-        }
-        fichier<<"\n";    
-    }
-    (*vect).resize(0);
-}
 
 void checkAllCollisions(Player &player, sf::Vector2f direction, Map &mapping, int &actualMap, sf::RenderWindow& window)
 /*
@@ -173,7 +108,7 @@ int main()
     float view_x;//variables used to display the view
     float view_y;
     Map level1[level1MapNumber];//a list of all map in the first level
-    //getMapData("Data/000.txt", level1[0]);//we collect data for the map from getMapData
+    getMapData("Data/000.txt", level1[0],&HITBOX);//we collect data for the map from getMapData
     //getMapData("Data/001.txt", level1[1]);//we collect data for the map from getMapData
 
     Player player;
@@ -182,10 +117,6 @@ int main()
     Fading fadeScreen(0.2, sf::RectangleShape(sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT)));
     while (window.isOpen())
     {
-        std::string nomDuFichierDeLaMap="Data/00"+std::to_string(currentLevel)+".txt";
-        getMapData2(nomDuFichierDeLaMap, level1[currentLevel],&HITBOX);
-        ecritDansTxt(nomDuFichierDeLaMap,&HITBOX);
-        
         deltaTime = clock.restart().asSeconds();//we get the time that took the machine to get through the whole cycle each time so we can calculate movement based on that
         if (deltaTime > 1.0f/20.0f)// we set a framerate limit from which the game will slow down
         {
@@ -204,7 +135,31 @@ int main()
             //player.EventStorage(evnt);//not used anymore
             if(evnt.type == sf::Event::TextEntered){
                 std::cout<<evnt.text.unicode<<"\n";
-                if(evnt.text.unicode==99){positionMouse();}
+                if(evnt.text.unicode==99){//C
+					creeHitBox(&HITBOX);
+	        		//std::string nomDuFichierDeLaMap="Data/00"+std::to_string(currentLevel)+".txt";
+					ecritDansTxt("Data/000.txt",&HITBOX);
+					getMapData("Data/000.txt",level1[0],&HITBOX);
+				}
+				if(evnt.text.unicode==97){affichRect(&HITBOX,level1[0]);}//A
+				if(evnt.text.unicode==121){//Y
+					for(int i=0;i<HITBOX.size();i++){
+						for(int y=0;y<HITBOX[i].size();y++){
+							std::cout<<HITBOX[i][y]<<" ";		
+						}
+						std::cout<<"\n";
+					}
+				}
+                if(evnt.text.unicode==109){//M
+                    modifHitBox(&HITBOX);
+                    ecritDansTxt("Data/000.txt",&HITBOX);
+                    getMapData("Data/000.txt", level1[0],&HITBOX);
+                }
+                if(evnt.text.unicode==115){//S
+                    supppr(&HITBOX);
+                    ecritDansTxt("Data/000.txt",&HITBOX);
+                    getMapData("Data/000.txt", level1[0],&HITBOX);
+                }
             }
         }
 
