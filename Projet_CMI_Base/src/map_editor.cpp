@@ -14,10 +14,9 @@
 #include "../include/ecriture_hit_box.h"
 
 std::vector<std::vector<int>> HITBOX;
-
-
-static const float VIEW_WIDTH = 1920.0f; // defines the size of the view and the window, we might have to separate the two at some point
-static const float VIEW_HEIGHT = 1080.0f;
+int colorAffiche[2]={1,0};
+float VIEW_WIDTH=1200; // defines the size of the view and the window, we might have to separate the two at some point
+float VIEW_HEIGHT=500;
 
 void ResizeView(const sf::RenderWindow & window, sf::View& view)
 //not used anymore because it made the view bug, but it was made to set things to the right size after changing window size
@@ -95,6 +94,12 @@ simple drawAll function where we will draw every entities that needs to be drawn
 
 int main()
 {
+    std::cout<<"pour créer une hit box appuie sur c,\n";
+    std::cout<<"pour afficher un rectangle en blanc appuie sur a,\n";
+    std::cout<<"pour modifier un rectangle sur m,\n";
+    std::cout<<"pour supprimer s\n\n";
+    std::cout<<"entre la largeur que tu veux pour ta fenêtre:  ";std::cin>>VIEW_WIDTH;
+    std::cout<<"entre la hauterur:  ";std::cin>>VIEW_HEIGHT;
     float deltaTime = 0.0f;//used so that any machine runs the game at the same speed but is the source of some bugs when not handled carefully
     sf::Clock clock;
 
@@ -117,6 +122,7 @@ int main()
     Fading fadeScreen(0.2, sf::RectangleShape(sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT)));
     while (window.isOpen())
     {
+        std::string nomDuFichierDeLaMap="Data/00"+std::to_string(currentLevel)+".txt";
         deltaTime = clock.restart().asSeconds();//we get the time that took the machine to get through the whole cycle each time so we can calculate movement based on that
         if (deltaTime > 1.0f/20.0f)// we set a framerate limit from which the game will slow down
         {
@@ -136,12 +142,30 @@ int main()
             if(evnt.type == sf::Event::TextEntered){
                 std::cout<<evnt.text.unicode<<"\n";
                 if(evnt.text.unicode==99){//C
-					creeHitBox(&HITBOX);
+					creeHitBox(&HITBOX,view,&window);
 	        		//std::string nomDuFichierDeLaMap="Data/00"+std::to_string(currentLevel)+".txt";
-					ecritDansTxt("Data/000.txt",&HITBOX);
-					getMapData("Data/000.txt",level1[0],&HITBOX);
+					ecritDansTxt(nomDuFichierDeLaMap,&HITBOX);
+					getMapData(nomDuFichierDeLaMap,level1[currentLevel],&HITBOX);
 				}
-				if(evnt.text.unicode==97){affichRect(&HITBOX,level1[0]);}//A
+				if(evnt.text.unicode==97){//A
+                    if(colorAffiche[0]==1){
+                        std::cout<<"entre l'indice du rectangle a afficher en blanc:   ";std::cin>>colorAffiche[1];
+                        HITBOX[colorAffiche[1]][4]+=100;
+                        ecritDansTxt(nomDuFichierDeLaMap,&HITBOX);
+                        getMapData(nomDuFichierDeLaMap,level1[currentLevel],&HITBOX);
+                        std::cout<<"rappuie sur a pour que tout revienne à la normale\n";
+                        colorAffiche[0]*=-1;
+                    }
+                    else{
+                        HITBOX[colorAffiche[1]][4]-=100;
+                        ecritDansTxt(nomDuFichierDeLaMap,&HITBOX);
+                        getMapData(nomDuFichierDeLaMap,level1[currentLevel],&HITBOX);
+                        colorAffiche[0]*=-1;
+                        }
+                }
+				if(evnt.text.unicode==103){int a,b;positionMouse(&a,&b,view,&window);}//G
+
+
 				if(evnt.text.unicode==121){//Y
 					for(int i=0;i<HITBOX.size();i++){
 						for(int y=0;y<HITBOX[i].size();y++){
@@ -152,13 +176,14 @@ int main()
 				}
                 if(evnt.text.unicode==109){//M
                     modifHitBox(&HITBOX);
-                    ecritDansTxt("Data/000.txt",&HITBOX);
-                    getMapData("Data/000.txt", level1[0],&HITBOX);
+                    ecritDansTxt(nomDuFichierDeLaMap,&HITBOX);
+                    getMapData(nomDuFichierDeLaMap, level1[currentLevel],&HITBOX);
                 }
                 if(evnt.text.unicode==115){//S
                     supppr(&HITBOX);
-                    ecritDansTxt("Data/000.txt",&HITBOX);
-                    getMapData("Data/000.txt", level1[0],&HITBOX);
+                    std::cout<<"j'aime le caca\n";
+                    ecritDansTxt(nomDuFichierDeLaMap,&HITBOX);
+                    getMapData(nomDuFichierDeLaMap, level1[currentLevel],&HITBOX);
                 }
             }
         }
@@ -167,6 +192,7 @@ int main()
         if(player.Door(deltaTime, currentLevel) || player.GetTrap() > 0.3)//handle doors and trap events
         {
             fadeScreen.Fade(deltaTime);
+            getMapData(nomDuFichierDeLaMap, level1[currentLevel],&HITBOX);
         }
         else if (player.GetTrap() >= 0.2 && player.GetTrap() <= 0.3)
         {

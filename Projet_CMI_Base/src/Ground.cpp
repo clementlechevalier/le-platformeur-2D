@@ -52,13 +52,15 @@ void Ground::Draw(sf::RenderWindow& window)
         m_body.setFillColor(sf::Color::Yellow);
     if(m_type == 3)
         m_body.setFillColor(sf::Color::Red);
+    if(m_type>=100)
+        m_body.setFillColor(sf::Color::White);
 
     window.draw(m_body);
 }
 
 Collider Ground::GetCollider()
 {
-    if (m_type == 1)
+    if (m_type == 1 or m_type >=100)
     {
     return Collider(m_body);
     }
