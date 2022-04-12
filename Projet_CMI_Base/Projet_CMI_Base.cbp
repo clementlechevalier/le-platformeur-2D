@@ -55,7 +55,6 @@
 		<Unit filename="include/Ennemies/EnnemyBoss1.h" />
 		<Unit filename="include/Ennemies/EnnemyFlying_eye.h" />
 		<Unit filename="include/Ennemies/EnnemySkeleton.h" />
-		<Unit filename="include/Ennemy.h" />
 		<Unit filename="include/Fading.h" />
 		<Unit filename="include/Ground.h" />
 		<Unit filename="include/Hitbox.h" />
@@ -67,7 +66,6 @@
 		<Unit filename="src/Ennemies/EnnemyBoss1.cpp" />
 		<Unit filename="src/Ennemies/EnnemyFlying_eye.cpp" />
 		<Unit filename="src/Ennemies/EnnemySkeleton.cpp" />
-		<Unit filename="src/Ennemy.cpp" />
 		<Unit filename="src/Fading.cpp" />
 		<Unit filename="src/Ground.cpp" />
 		<Unit filename="src/Hitbox.cpp" />
