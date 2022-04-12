@@ -13,8 +13,9 @@ class Collider
     void SetPosition(float dx, float dy) {m_body.setPosition(dx, dy);}//moves the colliding objects
     void ChangeActive();
 
-    bool CheckCollision(Collider& other, sf::Vector2f& direction,sf::RenderWindow& window);//check if other and the current object are colliding. return true if they are
+    bool CheckCollision(Collider& other);//check if other and the current object are colliding. return true if they are. we can add sf::RenderWindow& window
     sf::Vector2f Repel(Collider other, sf::Vector2f& direction);
+    sf::Vector2f Distance(Collider other);
 
     sf::Vector2f GetPosition() {return m_body.getPosition();}
     sf::Vector2f GetPreviousPosition() {return m_prevLocation;}

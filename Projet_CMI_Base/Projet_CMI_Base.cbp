@@ -52,16 +52,26 @@
 		</Linker>
 		<Unit filename="include/Animation.h" />
 		<Unit filename="include/Collider.h" />
+		<Unit filename="include/Ennemies/EnnemyBoss1.h" />
+		<Unit filename="include/Ennemies/EnnemyFlying_eye.h" />
+		<Unit filename="include/Ennemies/EnnemySkeleton.h" />
+		<Unit filename="include/Ennemy.h" />
 		<Unit filename="include/Fading.h" />
 		<Unit filename="include/Ground.h" />
 		<Unit filename="include/Hitbox.h" />
+		<Unit filename="include/Living_Entity.h" />
 		<Unit filename="include/Map.h" />
 		<Unit filename="include/Player.h" />
 		<Unit filename="src/Animation.cpp" />
 		<Unit filename="src/Collider.cpp" />
+		<Unit filename="src/Ennemies/EnnemyBoss1.cpp" />
+		<Unit filename="src/Ennemies/EnnemyFlying_eye.cpp" />
+		<Unit filename="src/Ennemies/EnnemySkeleton.cpp" />
+		<Unit filename="src/Ennemy.cpp" />
 		<Unit filename="src/Fading.cpp" />
 		<Unit filename="src/Ground.cpp" />
 		<Unit filename="src/Hitbox.cpp" />
+		<Unit filename="src/Living_Entity.cpp" />
 		<Unit filename="src/Map.cpp" />
 		<Unit filename="src/Player.cpp" />
 		<Unit filename="src/main.cpp" />

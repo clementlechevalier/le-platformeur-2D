@@ -26,7 +26,7 @@ void Collider::ChangeActive()
     }
 }
 
-bool Collider::CheckCollision(Collider& other, sf::Vector2f& direction, sf::RenderWindow& window)
+bool Collider::CheckCollision(Collider& other)//sf::RenderWindow& window
 {
     sf::Vector2f thisPoints[4];
     thisPoints[0] = sf::Vector2f(GetPosition().x, GetPosition().y);
@@ -112,29 +112,29 @@ bool Collider::CheckCollision(Collider& other, sf::Vector2f& direction, sf::Rend
         line[1] = sf::Vertex(sf::Vector2f(thisPoints[1]));
         window.draw(line, 2, sf::Lines);
 
-        line[0] = sf::Vertex(sf::Vector2f(thisAxisXPoints[2], 0));
+        line[0] = sf::Vertex(sf::Vector2f(thisAxisXPoints[3], 0));
         line[1] = sf::Vertex(sf::Vector2f(otherPoints[3]));
         window.draw(line, 2, sf::Lines);
 
-        line[0] = sf::Vertex(sf::Vector2f(thisAxisXPoints[3], 0));
+        line[0] = sf::Vertex(sf::Vector2f(thisAxisXPoints[2], 0));
         line[1] = sf::Vertex(sf::Vector2f(otherPoints[0]));
         window.draw(line, 2, sf::Lines);
 
 
 
-        line[0] = sf::Vertex(sf::Vector2f(0, thisAxisYPoints[0]));
+        line[0] = sf::Vertex(sf::Vector2f(0, thisAxisYPoints[1]));
         line[1] = sf::Vertex(sf::Vector2f(thisPoints[2]));
         window.draw(line, 2, sf::Lines);
 
-        line[0] = sf::Vertex(sf::Vector2f(0, thisAxisYPoints[1]));
+        line[0] = sf::Vertex(sf::Vector2f(0, thisAxisYPoints[0]));
         line[1] = sf::Vertex(sf::Vector2f(thisPoints[1]));
         window.draw(line, 2, sf::Lines);
 
-        line[0] = sf::Vertex(sf::Vector2f(0, thisAxisYPoints[2]));
+        line[0] = sf::Vertex(sf::Vector2f(0, thisAxisYPoints[3]));
         line[1] = sf::Vertex(sf::Vector2f(otherPoints[2]));
         window.draw(line, 2, sf::Lines);
 
-        line[0] = sf::Vertex(sf::Vector2f(0, thisAxisYPoints[3]));
+        line[0] = sf::Vertex(sf::Vector2f(0, thisAxisYPoints[2]));
         line[1] = sf::Vertex(sf::Vector2f(otherPoints[1]));
         window.draw(line, 2, sf::Lines);
 
@@ -159,22 +159,23 @@ bool Collider::CheckCollision(Collider& other, sf::Vector2f& direction, sf::Rend
         window.draw(line, 2, sf::Lines);
 
 
-        line[0] = sf::Vertex(sf::Vector2f(0, otherAxisYPoints[0]));
+        line[0] = sf::Vertex(sf::Vector2f(0, otherAxisYPoints[1]));
         line[1] = sf::Vertex(sf::Vector2f(thisPoints[2]));
         window.draw(line, 2, sf::Lines);
 
-        line[0] = sf::Vertex(sf::Vector2f(0, otherAxisYPoints[1]));
+        line[0] = sf::Vertex(sf::Vector2f(0, otherAxisYPoints[0]));
         line[1] = sf::Vertex(sf::Vector2f(thisPoints[1]));
         window.draw(line, 2, sf::Lines);
 
-        line[0] = sf::Vertex(sf::Vector2f(0, otherAxisYPoints[2]));
+        line[0] = sf::Vertex(sf::Vector2f(0, otherAxisYPoints[3]));
         line[1] = sf::Vertex(sf::Vector2f(otherPoints[2]));
         window.draw(line, 2, sf::Lines);
 
-        line[0] = sf::Vertex(sf::Vector2f(0, otherAxisYPoints[3]));
+        line[0] = sf::Vertex(sf::Vector2f(0, otherAxisYPoints[2]));
         line[1] = sf::Vertex(sf::Vector2f(otherPoints[1]));
-        window.draw(line, 2, sf::Lines);*/
+        window.draw(line, 2, sf::Lines);//*/
         }
+
         float thisTotalProjections[4];
         thisTotalProjections[0] = abs(thisAxisXPoints[0]-thisAxisXPoints[1]);//projection on the X axis of this entity
         thisTotalProjections[1] = abs(thisAxisYPoints[0]-thisAxisYPoints[1]);//projection on the Y axis of this entity
@@ -195,6 +196,7 @@ bool Collider::CheckCollision(Collider& other, sf::Vector2f& direction, sf::Rend
 
         bool verif = cumulativeTotalProjections[0] <= thisTotalProjections[0] + otherTotalProjections[0] && cumulativeTotalProjections[1] <= thisTotalProjections[1] + otherTotalProjections[1]
                     && cumulativeTotalProjections[2] <= thisTotalProjections[2] + otherTotalProjections[2] && cumulativeTotalProjections[3] <= thisTotalProjections[3] + otherTotalProjections[3];
+
 
         //std::cout << (bool)(cumulativeTotalProjections[0] < thisTotalProjections[0]+ otherTotalProjections[0])
         //            <<(bool)(cumulativeTotalProjections[1] < thisTotalProjections[1] + otherTotalProjections[1])
@@ -276,6 +278,27 @@ sf::Vector2f Collider::Repel(Collider other, sf::Vector2f& direction)
         }
     }
     return Offset;
+}
+
+
+sf::Vector2f Collider::Distance(Collider other)
+{
+    sf::Vector2f distance = sf::Vector2f(0.0f, 0.0f);
+    if(m_active)
+    {
+        sf::Vector2f otherHalfSize = other.GetSize()/2.0f;
+        sf::Vector2f otherPosition = other.GetPosition()+otherHalfSize;
+        sf::Vector2f thisHalfSize = GetSize()/2.0f;
+        sf::Vector2f thisPosition = GetPosition()+thisHalfSize;
+
+        float deltaX = otherPosition.x - thisPosition.x;
+        float deltaY = otherPosition.y - thisPosition.y;
+
+        distance.x = deltaX;
+        distance.y = deltaY;
+
+    }
+    return distance;
 }
 
 Collider::~Collider()

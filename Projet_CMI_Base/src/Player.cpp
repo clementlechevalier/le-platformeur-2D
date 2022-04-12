@@ -3,6 +3,7 @@
 #include <math.h>
 #include "../include/Player.h"
 
+//primary//
 Player::Player()
 {
     m_textureIdle.loadFromFile("Sprites/FreeKnight/Used/_Idle.png");
@@ -24,26 +25,22 @@ Player::Player()
     m_attacking = 0;
     m_scale = 2;
     m_rotation = 0;
-    m_row = 0;
-    m_faceRight = true;
     m_texture.setSize(sf::Vector2f(120.0f * m_scale, 80.0f * m_scale));
     m_texture.setPosition(200.0f, 200.0f);
     m_texture.setTexture(&m_textureIdle);
     m_texture.setRotation(m_rotation);
+    m_maxLife = 5;
+    m_life = 5;
 
     m_mainHitbox.setSize(sf::Vector2f(120.0f * m_scale, 80.0f * m_scale));
     m_mainHitbox.setPosition(200.0f, 200.0f);
     m_mainHitbox.setRotation(m_rotation);
 
-    m_jumpFall = 5000.0f;
-    m_canUseEvent = true;
-    m_attacking = 0;
-    m_canMove = true;
     m_inDoor = 0;
     m_trap = 0;
-    m_textureOffset = 0;
-    m_knockback = 0;
-    m_maxKnockback = 0.5;
+    m_textureOffset = 240;
+    m_maxKnockback = 0.3;
+    m_maxImmortalityTime = 1;
 
     getHitboxes("Hitboxes/MainCharacter/idleKnight.txt");
     getHitboxes("Hitboxes/MainCharacter/runKnight.txt");
@@ -59,133 +56,10 @@ Player::~Player()
 
 }
 
-void Player::getHitboxes(std::string txtFileName)
-{
-    std::ifstream txtFile(txtFileName);
-    std::vector<std::vector<sf::RectangleShape>> collisionHitboxes;
-    std::vector<std::vector<sf::RectangleShape>> damageTakenHitboxes;
-    std::vector<std::vector<sf::RectangleShape>> damageDealtHitboxes;
-    std::vector<sf::RectangleShape> currentCollisionHitboxes;
-    std::vector<sf::RectangleShape> currentDamageTakenHitboxes;
-    std::vector<sf::RectangleShape> currentDamageDealtHitboxes;
-    char x = 0;
-    int level = 0;
-    int lign = 0;
-    int column = 0;
-    int number = 0;
-    std::vector<int> hitbox;
-    sf::RectangleShape currentHitbox;
-    if(txtFile)
-    {
-        while(txtFile.get(x))
-        {
-            if(x == '[')
-            {
-                level ++;
-                number = 0;
-            }
-            else if(x == ']')
-            {
-                if(level == 1){
-                    lign++;
-                    column = 0;}
-                else if(level == 2){
-                    collisionHitboxes.push_back(currentCollisionHitboxes);
-                    damageTakenHitboxes.push_back(currentDamageTakenHitboxes);
-                    damageDealtHitboxes.push_back(currentDamageDealtHitboxes);
-                    currentCollisionHitboxes.clear();
-                    currentDamageTakenHitboxes.clear();
-                    currentDamageDealtHitboxes.clear();
-                    column++;}
-                else if(level == 3){
-                    hitbox.push_back(number);
-                    currentHitbox.setPosition(sf::Vector2f(hitbox[0] * m_scale, hitbox[1] * m_scale));
-                    currentHitbox.setSize(sf::Vector2f(hitbox[2] * m_scale, hitbox[3] * m_scale));
-                    currentHitbox.setRotation(hitbox[5]);
-                    if(hitbox[4] == 1){
-                        currentCollisionHitboxes.push_back(currentHitbox);}
-                    else if(hitbox[4] == 2){
-                        currentDamageTakenHitboxes.push_back(currentHitbox);}
-                    else if(hitbox[4] == 3){
-                        currentDamageDealtHitboxes.push_back(currentHitbox);}
-                    }
-                level --;
-                number = 0;
-                hitbox = {};
-            }
-            else if(x == ',' && level == 3)
-            {
-                hitbox.push_back(number);
-                number = 0;;
-            }
-            else
-            {
-                number *= 10;
-                number += (int)x - 48;
-            }
-
-        }
-        m_collisionHitboxes.push_back(collisionHitboxes);
-        m_damageDealtHitboxes.push_back(damageDealtHitboxes);
-        m_damageTakenHitboxes.push_back(damageTakenHitboxes);
-    }
-    else
-    {
-        std::cout << "can't open txt file : " << txtFileName << std::endl;
-    }
-    txtFile.close();
-}
-
-void Player::EventStorage(sf::Event event) //pour l'instant inutile
-{
-
-    if (event.type == sf::Event::KeyPressed)
-    {
-        if (event.key.code == sf::Keyboard::Space)
-        {
-            m_nextEvent = "jump";
-            m_storageDuration = 1000;
-            m_canUseEvent = false;
-        }
-    }
-    else if (event.type == sf::Event::KeyReleased)
-    {
-        m_canUseEvent = true;
-    }
-}
-
-void Player::Attacking(float deltaTime)
-{
-    if(m_attackDuration > 0)
-    {
-        m_attackDuration -= deltaTime;
-        if(m_animationAttack.getCurrentImage() == 4){
-            m_animationAttack.SetCurrentImage(5);
-            m_attackDuration = 0;
-            }
-        else if(m_animationAttack.getCurrentImage() == 9){
-            m_animationAttack.SetCurrentImage(0);
-            m_attackDuration = 0;
-            }
-    }
-    else
-    {
-        m_attacking = 0;
-    }
-}
-
+//actions//
 void Player::Inputs(float deltaTime)
 {
     m_prevLocation = m_mainHitbox.getPosition();
-    if (m_storageDuration > 1)
-    {
-        m_storageDuration --;
-    }
-    else if (m_storageDuration == 1)
-    {
-        m_nextEvent = "";
-        m_storageDuration = 0;
-    }
 
     bool playerMovementEnabled = ( m_inDoor <= 0 && m_knockback <= 0);
     if(playerMovementEnabled)
@@ -215,10 +89,10 @@ void Player::Inputs(float deltaTime)
             m_canJump = false;
             m_velocity.y = -800.0f;
             m_jumpDuration = 1.0f;
+            m_jumpFall = 0.0f;
         }
         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_jumpDuration > 0.0f)
         {
-            m_velocity.y -= m_jumpFall*deltaTime;
             m_jumpDuration -= 3.1*deltaTime;
 
         }
@@ -226,15 +100,17 @@ void Player::Inputs(float deltaTime)
         //falling//
         else
         {
+            if(m_velocity.y <= -800){
+                m_velocity.y = -400.0f;}
             m_jumpDuration = 0.0f;
-            if (m_jumpFall < 5000.0f)
+            if (m_jumpFall < 100.0f)
             {
-                m_jumpFall += 5;
+                m_jumpFall += 50*deltaTime;
             }
         }
         if (m_velocity.y < 1000.0f && !m_canJump)
         {
-            m_velocity.y += m_jumpFall*deltaTime;
+            m_velocity.y += m_jumpFall;
         }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
@@ -243,40 +119,127 @@ void Player::Inputs(float deltaTime)
             m_attacking = 1;
         }
     }
+}
 
-    //ANIMATIONS//
-    if (m_velocity.x == 0.0f)
+void Player::Attacking(float deltaTime)
+{
+    if(m_attackDuration > 0)
     {
-        m_row = 0;
+        m_attackDuration -= deltaTime;
+        if(m_animationAttack.getCurrentImage() == 4){
+            m_animationAttack.SetCurrentImage(5);
+            m_attackDuration = 0;
+            }
+        else if(m_animationAttack.getCurrentImage() == 9){
+            m_animationAttack.SetCurrentImage(0);
+            m_attackDuration = 0;
+            }
     }
     else
     {
-        if(m_animationAttack.getCurrentImage() == 0 || m_animationAttack.getCurrentImage() == 5 )
-        {
-            if(m_velocity.x > 0.0f){
-                if(!m_faceRight){
-                    m_texture.scale(sf::Vector2f(-1.f, 1.f));}
-                    m_textureOffset = 0;
-                m_faceRight = true;
-            }
-            else if (m_velocity.x < 0.0f){
-                if(m_faceRight){
-                    m_texture.scale(sf::Vector2f(-1.f, 1.f));}
-                    m_textureOffset = 240;
-                m_faceRight = false;
-            }
-        }
+        m_attacking = 0;
     }
 }
 
-void Player::Update(float deltaTime)
+void Player::GetHit()
+{
+    if(m_immortalityTime <= 0)
+    {
+        m_animationAttack.SetCurrentImage(0);
+        m_attackDuration = 0;
+        m_velocity = sf::Vector2f(0,0);
+        m_knockback = m_maxKnockback;
+        m_immortalityTime = m_maxImmortalityTime;
+        m_life -= 1;
+    }
+}
+
+
+//interactions//
+void Player::Trapped(sf::Vector2f nextLocation)
+{
+    if (m_trap <= 0)
+    {
+        m_nextLocation = nextLocation;
+        m_trap = 0.7f;
+        m_canJump = false;
+        m_canMove = false;
+    }
+}
+
+bool Player::Door(float deltaTime, int &currentMap)
+{
+    if (m_inDoor > 0)
+    {
+        m_inDoor -= deltaTime;
+        if (m_nextDirection ==1)//going right
+        {
+            m_velocity.x = m_speed;
+        }
+        else if (m_nextDirection ==2)//going left
+        {
+            m_velocity.x = -m_speed;
+        }
+        if (m_inDoor >= 0.4 && m_inDoor <= 0.5)
+        {
+            m_mainHitbox.setPosition(m_nextLocation);
+            currentMap = m_nextMap;
+        }
+        if(m_inDoor > 0.3){
+            return true;}
+        else{
+            return false;}
+    }
+    else
+    {
+        m_inDoor = 0;
+    }
+    return false;
+}
+
+void Player::GoThroughDoor(sf::Vector2f nextLocation, int nextDirection, int nextMap)
+{
+    if(m_inDoor <= 0)
+    {
+        m_attackDuration = 0;
+        m_animationAttack.SetCurrentImage(0);
+        m_velocity = sf::Vector2f(0.0f, 0.0f);
+        m_inDoor = 0.7;
+        m_canJump = false;
+        m_nextLocation = nextLocation;
+        m_nextDirection = nextDirection;
+        m_nextMap = nextMap;
+    }
+}
+
+
+//Updates//
+void Player::UpdateMovement(float deltaTime)
 {
     if (m_trap > 0){m_trap -= deltaTime;}
     if (m_attacking > 0){Attacking(deltaTime);}
     if (m_knockback > 0){m_knockback -= deltaTime;}
     else {m_knockback = 0;}
+    if (m_immortalityTime > 0){m_immortalityTime -= deltaTime;}
+    else {m_immortalityTime = 0;}
 
     m_mainHitbox.move(m_velocity * deltaTime);
+}
+
+void Player::UpdateAnimation(float deltaTime)
+{
+    if(m_velocity.x != 0)
+    {
+        if(m_attackDuration <= 0)
+        {
+            if(m_velocity.x > 0.0f){
+                TurnRight();
+            }
+            else if (m_velocity.x < 0.0f){
+                TurnLeft();
+            }
+        }
+    }
     if (m_knockback > 0)
     {
         m_row = 6;
@@ -325,63 +288,11 @@ void Player::Update(float deltaTime)
         m_texture.setTexture(&m_textureRun);
         m_texture.setTextureRect(m_animationRun.getUvRect());
     }
-    m_texture.setPosition(sf::Vector2f(m_mainHitbox.getPosition().x + m_textureOffset,m_mainHitbox.getPosition().y));
-}
-
-bool Player::Door(float deltaTime, int &currentMap)
-{
-    if (m_inDoor > 0)
-    {
-        m_inDoor -= deltaTime;
-        if (m_nextDirection ==1)//going right
-        {
-            m_velocity.x = m_speed;
-        }
-        else if (m_nextDirection ==2)//going left
-        {
-            m_velocity.x = -m_speed;
-        }
-        if (m_inDoor >= 0.4 && m_inDoor <= 0.5)
-        {
-            m_mainHitbox.setPosition(m_nextLocation);
-            currentMap = m_nextMap;
-        }
-        if(m_inDoor > 0.3){
-            return true;}
-        else{
-            return false;}
-    }
-    else
-    {
-        m_inDoor = 0;
-    }
-    return false;
-}
-
-void Player::GoThroughDoor(sf::Vector2f nextLocation, int nextDirection, int nextMap)
-{
-    if(m_inDoor <= 0)
-    {
-        m_attackDuration = 0;
-        m_animationAttack.SetCurrentImage(0);
-        m_velocity = sf::Vector2f(0.0f, 0.0f);
-        m_inDoor = 0.7;
-        m_canJump = false;
-        m_nextLocation = nextLocation;
-        m_nextDirection = nextDirection;
-        m_nextMap = nextMap;
-    }
-}
-
-void Player::Trapped(sf::Vector2f nextLocation)
-{
-    if (m_trap <= 0)
-    {
-        m_nextLocation = nextLocation;
-        m_trap = 0.7f;
-        m_canJump = false;
-        m_canMove = false;
-    }
+    if(m_knockback > 0.2){
+        m_texture.setFillColor(sf::Color::Red);}
+    else{
+        m_texture.setFillColor(sf::Color::White);}
+    m_texture.setPosition(sf::Vector2f(m_mainHitbox.getPosition().x +  + m_textureOffset*(int)(!m_faceRight),m_mainHitbox.getPosition().y));
 }
 
 void Player::OnCollision(sf::Vector2f direction)
@@ -398,63 +309,49 @@ void Player::OnCollision(sf::Vector2f direction)
     if (direction.y < 0.0f)//collision on the bottom
     {
         m_velocity.y = 0.0f;
-        m_jumpFall = 5000.0f;
-        m_jumpAnimationTransition = true;
         m_canJump = true;
+        m_jumpFall = 0;
     }
     else if (direction.y > 0.0f)//collision on the top
     {
         m_velocity.y = 0.0f;
         m_jumpDuration = 0.0f;
-        m_jumpFall = 3000.0f;
     }
 }
 
-std::vector<Collider> Player::GetColliders()
+void Player::CheckCollisions(Ground platform)
 {
-    std::vector<Collider> returning;
-    for(int i = 0; i < (int)m_collisionHitboxes[m_row][m_frame].size(); i++)
+    Collider playerCollider = GetCollider();
+    std::vector<Collider> playerColliders = GetColliders();
+    sf::Vector2f direction(0,0);
+    if (platform.GetCollider().CheckCollision(playerCollider))
     {
-        sf::RectangleShape hitbox;
-        sf::Vector2f prevLoc = m_prevLocation+m_collisionHitboxes[m_row][m_frame][i].getPosition();
-        hitbox.setSize(m_collisionHitboxes[m_row][m_frame][i].getSize());
-        hitbox.setPosition(m_collisionHitboxes[m_row][m_frame][i].getPosition() + m_mainHitbox.getPosition());
-        hitbox.setRotation(m_collisionHitboxes[m_row][m_frame][i].getRotation());
-        if(!m_faceRight)
+        for(int j = 0; j < (int)playerColliders.size() ; j++)
         {
-            hitbox.setPosition(m_mainHitbox.getPosition().x - (m_collisionHitboxes[m_row][m_frame][i].getPosition().x) + 240 - hitbox.getSize().x, hitbox.getPosition().y);
-            prevLoc.x = m_prevLocation.x - m_collisionHitboxes[m_row][m_frame][i].getPosition().x +240 -hitbox.getSize().x;
+            if (platform.GetCollider().CheckCollision(playerColliders[j]))
+            {
+                //std::cout << playerColliders[0].GetPreviousPosition().x << " " << playerColliders[0].GetPosition().x << std::endl;
+                if (platform.GetType() ==1)
+                {
+                    sf::Vector2f offset = platform.GetCollider().Repel(playerColliders[j], direction);
+                    SetPosition(GetPosition()-offset);
+                    OnCollision(direction);
+                    m_playerColliding = true;
+                }
+                if (platform.GetType() ==2)
+                {
+                    GoThroughDoor(platform.GetNextLocation(), platform.GetNextDirection(), platform.GetNextMap());
+                }
+                if (platform.GetType() ==3)
+                {
+                    GetHit();
+                    Trapped(platform.GetNextLocation());
+                }
+            }
         }
-        returning.push_back(Collider(hitbox, 1, true, prevLoc));
-    }
-    return returning;
-}
-
-void Player::Draw(sf::RenderWindow& window)
-{
-    /*m_mainHitbox.setFillColor(sf::Color::Cyan);
-    window.draw(m_mainHitbox);
-    for(int i = 0; i < (int)m_collisionHitboxes[1][m_animationRun.getCurrentImage()].size(); i++)
-    {
-        sf::RectangleShape drawnHitbox;
-        drawnHitbox.setSize(m_collisionHitboxes[m_row][m_frame][i].getSize());
-        drawnHitbox.setPosition(m_collisionHitboxes[m_row][m_frame][i].getPosition() + m_mainHitbox.getPosition());
-        drawnHitbox.setRotation(m_collisionHitboxes[m_row][m_frame][i].getRotation());
-        if(!m_faceRight)
+        if (!m_playerColliding)
         {
-            drawnHitbox.setPosition(m_mainHitbox.getPosition().x - m_collisionHitboxes[m_row][m_frame][i].getPosition().x + 240 -drawnHitbox.getSize().x, drawnHitbox.getPosition().y);
+            Falling();
         }
-        window.draw(drawnHitbox);
-    }*/
-    window.draw(m_texture);
-
-}
-
-void Player::GetHit()
-{
-    if(m_knockback <= 0)
-    {
-        m_velocity = sf::Vector2f(0,0);
-        m_knockback = m_maxKnockback;
     }
 }
