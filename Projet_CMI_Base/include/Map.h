@@ -19,6 +19,8 @@ class Map
         void AddEnnemyFlying_eye(EnnemyFlying_eye ennemy);//add a platofrm to m_levelGrounds
         void AddEnnemyBoss1(EnnemyBoss1 ennemy);//add a platofrm to m_levelGrounds
         void SetMapSize(float width, float height);
+        void DrawBackground(sf::RenderWindow& window);
+        void DrawPlatforms(sf::RenderWindow& window);
         sf::Vector2f GetMapSize() {return m_mapSize.getSize();}
         virtual ~Map();
 
@@ -31,6 +33,8 @@ class Map
     protected:
 
         sf::RectangleShape m_mapSize;
+        std::vector<sf::Texture> m_backgroundsTexture;
+        std::vector<sf::Texture> m_platformsTexture;
 
 
     private:

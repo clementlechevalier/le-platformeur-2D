@@ -185,6 +185,22 @@ void drawAll(sf::RenderWindow& window, Player &player, Fading &fadeScreen, Map &
 simple drawAll function where we will draw every entities that needs to be drawn on the window
 */
 {
+    mapping.DrawBackground(window);
+    mapping.DrawPlatforms(window);
+    for(int enmy = 0; enmy < (int)mapping.m_levelEnnemyFlying_eye.size() ; enmy ++)
+    {
+        mapping.m_levelEnnemyFlying_eye[enmy].Draw(window);
+    }
+    for(int enmy = 0; enmy < (int)mapping.m_levelEnnemySkeleton.size() ; enmy ++)
+    {
+        mapping.m_levelEnnemySkeleton[enmy].Draw(window);
+    }
+    for(int enmy = 0; enmy < (int)mapping.m_levelEnnemyBoss1.size() ; enmy ++)
+    {
+        mapping.m_levelEnnemyBoss1[enmy].Draw(window);
+    }
+    player.Draw(window);
+
     sf::Texture heartTexture;
     heartTexture.loadFromFile("Sprites/HUD/heartFull.png");
     sf::RectangleShape heart;
@@ -200,23 +216,6 @@ simple drawAll function where we will draw every entities that needs to be drawn
         heart.setPosition(view.getCenter().x - VIEW_WIDTH/2 + 60*i, view.getCenter().y - VIEW_HEIGHT/2);
         window.draw(heart);
     }
-    for(unsigned int i=0; i < mapping.m_levelGrounds.size(); i++)
-    {
-        mapping.m_levelGrounds[i].Draw(window);
-    }
-    for(int enmy = 0; enmy < (int)mapping.m_levelEnnemyFlying_eye.size() ; enmy ++)
-    {
-        mapping.m_levelEnnemyFlying_eye[enmy].Draw(window);
-    }
-    for(int enmy = 0; enmy < (int)mapping.m_levelEnnemySkeleton.size() ; enmy ++)
-    {
-        mapping.m_levelEnnemySkeleton[enmy].Draw(window);
-    }
-    for(int enmy = 0; enmy < (int)mapping.m_levelEnnemyBoss1.size() ; enmy ++)
-    {
-        mapping.m_levelEnnemyBoss1[enmy].Draw(window);
-    }
-    player.Draw(window);
     fadeScreen.Draw(window, view);
 }
 

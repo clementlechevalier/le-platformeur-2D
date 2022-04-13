@@ -44,6 +44,17 @@ void Ground::GetInfo()
 {
 }
 
+sf::Vector2f Ground::GetPosition()
+{
+    return m_body.getPosition();
+}
+
+sf::Vector2f Ground::GetSize()
+{
+    return m_body.getSize();
+}
+
+
 void Ground::Draw(sf::RenderWindow& window)
 {
     if(m_type == 1)

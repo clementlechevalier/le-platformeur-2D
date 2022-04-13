@@ -19,6 +19,8 @@ class Ground
         int GetNextMap() {return m_destinationMap;}
         int GetNextDirection() {return m_destinationOrientation;}
         sf::Vector2f GetNextLocation() {return m_destinationLocation;}
+        sf::Vector2f GetPosition();
+        sf::Vector2f GetSize();
 
 
     protected:
