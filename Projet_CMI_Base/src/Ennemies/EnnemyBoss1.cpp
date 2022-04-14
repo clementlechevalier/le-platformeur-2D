@@ -66,7 +66,7 @@ void EnnemyBoss1::Behavior(float deltaTime)
     if(IsAlive())
     {
         m_velocity.x = 0.0f;
-        if(abs(m_distanceToPlayer.x) < 800  && abs(m_distanceToPlayer.y) < 300 && !m_playerDetected){ //player detection
+        if(abs(m_distanceToPlayer.x) < 800  && abs(m_distanceToPlayer.y) < 2000 && !m_playerDetected){ //player detection
             m_playerDetected = true;
             m_speed = 300;}
 
@@ -86,11 +86,11 @@ void EnnemyBoss1::Behavior(float deltaTime)
                     else if(m_attackDuration > 0.2){m_speed = 700;}
                     else if(m_attackDuration > 0){m_speed = 0;}
                 }
-                else if(m_distanceToPlayer.x < -10 && m_attackDuration <= 0 && m_faceRight){//change direction
+                else if(m_distanceToPlayer.x < -100 && m_attackDuration <= 0 && m_faceRight){//change direction
                     TurnLeft();}
-                else if(m_distanceToPlayer.x > 10 && m_attackDuration <= 0 && !m_faceRight){
+                else if(m_distanceToPlayer.x > 100 && m_attackDuration <= 0 && !m_faceRight){
                     TurnRight();}
-                else if(abs(m_distanceToPlayer.x) < 180 && abs(m_distanceToPlayer.y) < 200 && m_attackCooldown <= 0 && m_attack1Counter < 2){//Regular attack
+                else if(abs(m_distanceToPlayer.x) < 180 && abs(m_distanceToPlayer.y) < 200 && m_attackCooldown <= 0 && m_attack1Counter < 2 && abs(m_distanceToPlayer.y) < 500){//Regular attack
                     m_attackCooldown = m_maxAttackCooldown;
                     m_attackDuration = m_maxAttackDuration;
                     m_speed = 0;
@@ -98,7 +98,7 @@ void EnnemyBoss1::Behavior(float deltaTime)
                     m_attack3Counter = 0;
                     m_attack1Counter ++;
                     m_attacking = 1;}
-                else if(m_attackCooldown <= 0 && m_attack2Counter < 2 && randomAttack%3 == 0){//Jump Attack
+                else if(m_attackCooldown <= 0 && m_attack2Counter < 2 && randomAttack%3 == 0 && abs(m_distanceToPlayer.y) < 500 && m_velocity.y == 0){//Jump Attack
                     m_attackCooldown = 1.4;
                     m_attackDuration = 1.3;
                     m_velocity.y = -1200;
@@ -106,7 +106,7 @@ void EnnemyBoss1::Behavior(float deltaTime)
                     m_attack1Counter = 0;
                     m_attack2Counter ++;
                     m_attacking = 2;}
-                else if(m_attackCooldown <= 0 && m_attack3Counter < 2 && randomAttack%3 == 1){//Dash Attack
+                else if(m_attackCooldown <= 0 && m_attack3Counter < 2 && randomAttack%3 == 1 && abs(m_distanceToPlayer.y) < 500){//Dash Attack
                     m_attackCooldown = 2;
                     m_attackDuration = 1.7;
                     m_speed = -100;
@@ -141,7 +141,7 @@ void EnnemyBoss1::Behavior(float deltaTime)
                     TurnLeft();}
                 else if(m_distanceToPlayer.x > 10 && m_attackDuration <= 0 && !m_faceRight){
                     TurnRight();}
-                else if(abs(m_distanceToPlayer.x) < 150 && abs(m_distanceToPlayer.y) < 200 && m_attackCooldown <= 0 && m_attack1Counter < 2){//Attack
+                else if(abs(m_distanceToPlayer.x) < 150 && abs(m_distanceToPlayer.y) < 200 && m_attackCooldown <= 0 && m_attack1Counter < 2 && abs(m_distanceToPlayer.y) < 500){//Attack
                     m_attackCooldown = 1.2;
                     m_attackDuration = 1;
                     m_speed = 0;
@@ -149,7 +149,7 @@ void EnnemyBoss1::Behavior(float deltaTime)
                     m_attack3Counter = 0;
                     m_attack1Counter ++;
                     m_attacking = 1;}
-                else if(m_attackCooldown <= 0 && m_attack2Counter < 2 && randomAttack%3 == 0){//Jump Attack
+                else if(m_attackCooldown <= 0 && m_attack2Counter < 2 && randomAttack%3 == 0 && abs(m_distanceToPlayer.y) < 500 && m_velocity.y == 0){//Jump Attack
                     m_attackCooldown = 1.3;
                     m_attackDuration = 1.2;
                     m_velocity.y = -1200;
@@ -158,7 +158,7 @@ void EnnemyBoss1::Behavior(float deltaTime)
                     m_attack2Counter ++;
                     m_attack3Counter ++;
                     m_attacking = 2;}
-                else if(m_attackCooldown <= 0 && m_attack3Counter < 2 && randomAttack%3 == 1){//Dash Attack
+                else if(m_attackCooldown <= 0 && m_attack3Counter < 2 && randomAttack%3 == 1 && abs(m_distanceToPlayer.y) < 500){//Dash Attack
                     m_attackCooldown = 1.6;
                     m_attackDuration = 1.4;
                     m_speed = -100;

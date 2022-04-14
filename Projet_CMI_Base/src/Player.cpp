@@ -20,6 +20,10 @@ Player::Player()
     m_animationJumpFall = Animation(m_textureJumpFall, sf::Vector2u(2, 1), 0.15f);
     m_textureHurt.loadFromFile("Sprites/FreeKnight/Used/_Hit.png");
     m_animationHurt = Animation(m_textureHurt, sf::Vector2u(1, 1), 0.5f);
+    m_textureDeath.loadFromFile("Sprites/FreeKnight/Used/_Death.png");
+    m_animationDeath = Animation(m_textureDeath, sf::Vector2u(10, 1), 0.3f);
+    m_textureDeathStatic.loadFromFile("Sprites/FreeKnight/Used/_DeathStatic.png");
+    m_animationDeathStatic = Animation(m_textureDeathStatic, sf::Vector2u(1, 1), 0.1f);
 
     m_speed = 400.0f;
     m_attacking = 0;
@@ -98,7 +102,7 @@ void Player::Inputs(float deltaTime)
         }
 
         //falling//
-        else
+        else if (!m_canJump)
         {
             if(m_velocity.y <= -800){
                 m_velocity.y = -400.0f;}
@@ -216,6 +220,10 @@ void Player::GoThroughDoor(sf::Vector2f nextLocation, int nextDirection, int nex
 //Updates//
 void Player::UpdateMovement(float deltaTime)
 {
+    if (!m_playerColliding)
+    {
+        Falling();
+    }
     if (m_trap > 0){m_trap -= deltaTime;}
     if (m_attacking > 0){Attacking(deltaTime);}
     if (m_knockback > 0){m_knockback -= deltaTime;}
@@ -295,6 +303,14 @@ void Player::UpdateAnimation(float deltaTime)
     m_texture.setPosition(sf::Vector2f(m_mainHitbox.getPosition().x +  + m_textureOffset*(int)(!m_faceRight),m_mainHitbox.getPosition().y));
 }
 
+void Player::UpdateAnimationDeath(float deltaTime)
+{
+    m_texture.setFillColor(sf::Color::White);
+    m_animationDeath.Update(0, deltaTime, m_faceRight);
+    m_texture.setTexture(&m_textureDeath);
+    m_texture.setTextureRect(m_animationDeath.getUvRect());
+}
+
 void Player::OnCollision(sf::Vector2f direction)
 {
     if (direction.x < 0.0f)//collision on the left
@@ -348,10 +364,6 @@ void Player::CheckCollisions(Ground platform)
                     Trapped(platform.GetNextLocation());
                 }
             }
-        }
-        if (!m_playerColliding)
-        {
-            Falling();
         }
     }
 }

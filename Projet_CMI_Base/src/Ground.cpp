@@ -16,7 +16,7 @@ Ground::Ground(sf::Vector2f size, sf::Vector2f position, int type)
     m_body.setRotation(m_rotation);
 }
 
-Ground::Ground(sf::Vector2f size, sf::Vector2f position, int type, sf::Vector2f destination)
+Ground::Ground(sf::Vector2f size, sf::Vector2f position, int type, sf::Vector2f destination, int direction)
 {
     m_body.setSize(size);
     //m_body.setOrigin(size / 2.0f);
@@ -25,6 +25,7 @@ Ground::Ground(sf::Vector2f size, sf::Vector2f position, int type, sf::Vector2f 
     m_type = type;
     m_destinationLocation = destination;
     m_rotation = 0;
+    m_direction = direction;
 }
 
 Ground::Ground(sf::Vector2f size, sf::Vector2f position, int type, int destinationMap, int destinationOrientation, sf::Vector2f destination)

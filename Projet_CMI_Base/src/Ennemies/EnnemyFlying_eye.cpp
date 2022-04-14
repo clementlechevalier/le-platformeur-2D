@@ -1,5 +1,6 @@
 
 #include "../../include/Ennemies/EnnemyFlying_eye.h"
+#include <stdlib.h>
 
 //primary//
 EnnemyFlying_eye::EnnemyFlying_eye(float x, float y)
@@ -13,7 +14,8 @@ EnnemyFlying_eye::EnnemyFlying_eye(float x, float y)
     m_textureDeathStatic.loadFromFile("Sprites/Ennemies/Flying_eye/DeathStatic.png");
     m_animationDeathStatic = Animation(m_textureDeathStatic, sf::Vector2u(1, 1), 0.15f);
 
-    m_speed = 150.0f;
+    m_normalSpeed = 93.0f*  (1+(rand() % 4)/12.0);
+    m_speed = m_normalSpeed;
     m_scale = 2;
     m_maxLife = 20;
     m_life = 20;
@@ -54,10 +56,10 @@ void EnnemyFlying_eye::Behavior(float deltaTime)
     {
         if(abs(m_distanceToPlayer.x) < 300  && abs(m_distanceToPlayer.y) < 300){ //player detection
             m_playerDetected = true;
-            m_speed = 150;}
+            m_speed = m_normalSpeed*1.5;}
         else if(abs(m_distanceToPlayer.x) > 600 || abs(m_distanceToPlayer.y) > 800){//cease player detection
             m_playerDetected = false;
-            m_speed = 100;}
+            m_speed = m_normalSpeed;}
 
         if(m_playerDetected){
             if(m_distanceToPlayer.x < -10 && m_attackDuration <= 0){
@@ -71,7 +73,7 @@ void EnnemyFlying_eye::Behavior(float deltaTime)
             if(m_attacking == 1){
                 m_speed = 0;}
             else{
-            m_speed = 150;}
+            m_speed = m_normalSpeed*1.5;}
         }
         if(m_playerDetected)
         {

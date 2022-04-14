@@ -1,5 +1,6 @@
 
 #include "../../include/Ennemies/EnnemySkeleton.h"
+#include <stdlib.h>
 
 //primary//
 EnnemySkeleton::EnnemySkeleton(float x, float y)
@@ -15,7 +16,8 @@ EnnemySkeleton::EnnemySkeleton(float x, float y)
     m_textureDeathStatic.loadFromFile("Sprites/Ennemies/Skeleton/Death_Static.png");
     m_animationDeathStatic = Animation(m_textureDeathStatic, sf::Vector2u(1, 1), 0.15f);
 
-    m_speed = 150.0f;
+    m_normalSpeed = 140.0f*  (1+(rand() % 4)/12.0);
+    m_speed = m_normalSpeed;
     m_scale = 2;
     m_maxLife = 30;
     m_life = 30;
@@ -30,7 +32,7 @@ EnnemySkeleton::EnnemySkeleton(float x, float y)
 
     m_textureOffset = 300;
     m_knockback = 600;
-    m_maxAttackCooldown = 1;
+    m_maxAttackCooldown = 0.9;
     m_attackCooldown = m_maxAttackCooldown;
     m_deathAnimationTime = 0.8;
     m_maxImmortalityTime = 0.3;
@@ -54,22 +56,22 @@ void EnnemySkeleton::Behavior(float deltaTime)
         m_velocity.x = 0.0f;
         if(abs(m_distanceToPlayer.x) < 500  && abs(m_distanceToPlayer.y) < 100){ //player detection
             m_playerDetected = true;
-            m_speed = 200;}
+            m_speed = m_normalSpeed * 1.3;}
         else if(abs(m_distanceToPlayer.x) > 500 || abs(m_distanceToPlayer.y) > 400){//cease player detection
             m_playerDetected = false;
-            m_speed = 150;}
+            m_speed = m_normalSpeed;}
         else if(abs(m_distanceToPlayer.x) < 100 && abs(m_distanceToPlayer.y) >= 100 && m_playerDetected){//player detected but too high and close
             m_speed = 0;}
         else if(abs(m_distanceToPlayer.x) >= 100 && abs(m_distanceToPlayer.y) >= 100 && m_playerDetected){//player detected but too high and far
-            m_speed = 200;}
+            m_speed = m_normalSpeed*1.3;}
 
         if(m_playerDetected){
             if(m_distanceToPlayer.x < -10 && m_attackDuration <= 0){
                 TurnLeft();}
             else if(m_distanceToPlayer.x > 10 && m_attackDuration <= 0){
                 TurnRight();}
-            if(abs(m_distanceToPlayer.x) < 110 && abs(m_distanceToPlayer.y) < 100 && m_attackCooldown <= 0){
-                m_attackCooldown = m_maxAttackCooldown;
+            if(abs(m_distanceToPlayer.x) < 180 && abs(m_distanceToPlayer.y) < 150 && m_attackCooldown <= 0){
+                m_attackCooldown = m_maxAttackCooldown*  (1+(rand() % 5)/10.0) ;
                 m_attackDuration = 0.8;
                 m_attacking = 1;}
             if(m_attacking == 1){
@@ -84,6 +86,8 @@ void EnnemySkeleton::Behavior(float deltaTime)
             m_velocity.x -= m_speed;
         }
     }
+    else{
+    m_velocity.x = 0;}
     m_jumpDuration = 0.0f;
     if (m_jumpFall < 100)
     {
@@ -137,8 +141,8 @@ void EnnemySkeleton::UpdateMovement(float deltaTime)
             Attacking(deltaTime);}
         if(m_knockbackTime > 0){
             m_velocity.x -= m_knockback*m_pushDirection.x;}
-        m_mainHitbox.move(m_velocity * deltaTime);
     }
+    m_mainHitbox.move(m_velocity * deltaTime);
 }
 
 void EnnemySkeleton::UpdateAnimation(float deltaTime)

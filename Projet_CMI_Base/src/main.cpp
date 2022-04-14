@@ -16,8 +16,10 @@
 #include "../include/Ennemies/EnnemyBoss1.h"
 
 
-static const float VIEW_WIDTH = 1920.0f; // defines the size of the view and the window, we might have to separate the two at some point
-static const float VIEW_HEIGHT = 1080.0f;
+static const float VIEW_WIDTH = 1500.0f; // defines the size of the view
+static const float VIEW_HEIGHT = 845.0f;
+static const float WINDOW_WIDTH = 1920.0f; // defines the size of the window
+static const float WINDOW_HEIGHT = 1080.0f;
 
 
 void ResizeView(const sf::RenderWindow & window, sf::View& view)
@@ -68,10 +70,10 @@ then we store it in the Map object
                 mapping.AddGround(platform);
                 numbers.resize(0);
             }
-            else if (numbers[4] ==3 && numbers.size() == 7) //type 3 means we're dealing with a trap so we have more parameters
-                // the new parameters are 1-2- the location
+            else if (numbers[4] ==3 && numbers.size() == 8) //type 3 means we're dealing with a trap so we have more parameters
+                // the new parameters are 1-2- the location and 3- the direction (1 right, 2 down, 3 left, 4 up)
             {
-                Ground platform(sf::Vector2f(numbers[0], numbers[1]), sf::Vector2f(numbers[2], numbers[3]), (int)numbers[4], sf::Vector2f(numbers[5], numbers[6]));
+                Ground platform(sf::Vector2f(numbers[0], numbers[1]), sf::Vector2f(numbers[2], numbers[3]), (int)numbers[4], sf::Vector2f(numbers[5], numbers[6]), numbers[7]);
                 mapping.AddGround(platform);
                 numbers.resize(0);
             }
@@ -224,11 +226,11 @@ int main()
     float deltaTime = 0.0f;//used so that any machine runs the game at the same speed but is the source of some bugs when not handled carefully
     sf::Clock clock;
     sf::Vector2f direction;//will be changed, is currently the player direction
-    sf::RenderWindow window(sf::VideoMode(VIEW_WIDTH, VIEW_HEIGHT), "Pastis World"); //creation of the window and the view
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pastis World"); //creation of the window and the view
     sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT));
 
-
-    int const level1MapNumber = 3;//number of map in the first level
+    float timer = 0;
+    int const level1MapNumber = 4;//number of map in the first level
     int currentLevel = 0;//the current level we're in
     float view_x;//variables used to display the view
     float view_y;
@@ -236,24 +238,38 @@ int main()
     getMapData("Data/000.txt", level1[0]);//we collect data for the map from getMapData
     getMapData("Data/001.txt", level1[1]);//we collect data for the map from getMapData
     getMapData("Data/002.txt", level1[2]);//we collect data for the map from getMapData
+    getMapData("Data/003.txt", level1[3]);//we collect data for the map from getMapData
 
     Player player;
-    player.SetPosition(sf::Vector2f(800, 0));
+    //player.SetPosition(sf::Vector2f(100, 2000));
+    player.SetPosition(sf::Vector2f(650, -1000));
 
-    EnnemyFlying_eye patrick(0, 300);
-    EnnemyFlying_eye pascal(1200, 300);
-    EnnemyFlying_eye michelieu(1500, 500);
-    EnnemySkeleton jeanPatrick(1400, 900);
-    EnnemySkeleton michel(1200, 300);
-    EnnemySkeleton fabrice(300, 700);
-    EnnemyBoss1 jeanPaul(900, 600);
-    level1[0].AddEnnemyFlying_eye(patrick);
-    level1[1].AddEnnemyFlying_eye(pascal);
-    level1[1].AddEnnemyFlying_eye(michelieu);
+    EnnemySkeleton michel(2500, 750);
+    EnnemyFlying_eye patrick(500, 300);
+    EnnemySkeleton jeanPatrick(1300, 800);
+    EnnemySkeleton fabrice(1500, 1750);
+    EnnemySkeleton paul(1400, 1750);
+    EnnemyFlying_eye pascal(850, 1500);
+    EnnemyFlying_eye michelieu(400, 1000);
+    EnnemyFlying_eye pierrot(600, 800);
+    EnnemyFlying_eye michou(200, 300);
+    EnnemySkeleton seb(1200, 450);
+    EnnemySkeleton greg(1650, 1250);
+    EnnemySkeleton ben(1200, 1250);
+    EnnemyBoss1 jeanPaul(100, 100);
     level1[0].AddEnnemySkeleton(michel);
-    level1[0].AddEnnemySkeleton(jeanPatrick);
+    level1[1].AddEnnemyFlying_eye(patrick);
+    level1[1].AddEnnemySkeleton(jeanPatrick);
     level1[1].AddEnnemySkeleton(fabrice);
-    level1[2].AddEnnemyBoss1(jeanPaul);
+    level1[1].AddEnnemySkeleton(paul);
+    level1[2].AddEnnemyFlying_eye(pascal);
+    level1[2].AddEnnemyFlying_eye(pierrot);
+    level1[2].AddEnnemyFlying_eye(michelieu);
+    level1[2].AddEnnemyFlying_eye(michou);
+    level1[2].AddEnnemySkeleton(seb);
+    level1[2].AddEnnemySkeleton(greg);
+    level1[2].AddEnnemySkeleton(ben);
+    level1[3].AddEnnemyBoss1(jeanPaul);
     Fading fadeScreen(0.2, sf::RectangleShape(sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT)));
     while (window.isOpen())
     {
@@ -275,38 +291,57 @@ int main()
             //player.EventStorage(evnt);//not used anymore
         }
 
-        movementAll(player, level1[currentLevel], deltaTime);//the character updates depending on the player inputs
-        if(player.Door(deltaTime, currentLevel) || player.GetTrap() > 0.5)//handle doors and trap events
+        if(player.IsAlive())
         {
-            fadeScreen.Fade(deltaTime);
-        }
-        else if (player.GetTrap() >= 0.4 && player.GetTrap() <= 0.5)
-        {
-            player.SetPosition(player.GetNextLocation());
+            movementAll(player, level1[currentLevel], deltaTime);//the character updates depending on the player inputs
+            if(player.Door(deltaTime, currentLevel) || player.GetTrap() > 0.5)//handle doors and trap events
+            {
+                fadeScreen.Fade(deltaTime);
+            }
+            else if (player.GetTrap() >= 0.4 && player.GetTrap() <= 0.5)
+            {
+                player.SetPosition(player.GetNextLocation());
+            }
+            else
+            {
+                fadeScreen.UnFade(deltaTime);
+                if (player.GetTrap() > 0 && player.GetTrap() <= 0.1)
+                {
+                    player.Freed();
+                }
+            }
+
+            sf::Vector2f playerCenter = player.GetPosition() + player.GetSize()/2.0f;
+            view_x = std::min(level1[currentLevel].GetMapSize().x-VIEW_WIDTH/2  , std::max(playerCenter.x, VIEW_WIDTH/2));//the view must only show the inside of a map so we set boundaries here
+            view_y = std::min(level1[currentLevel].GetMapSize().y-VIEW_HEIGHT/2, std::max(playerCenter.y, VIEW_HEIGHT/2));
+            view.setCenter(view_x, view_y);//and set the view center
+            window.setView(view);
+
+
+            window.clear(sf::Color(150,150,150));//we then refresh the window and redraw everything
+            updateAllMovement(deltaTime,player, level1[currentLevel]);
+            checkAllCollisions(player, direction, level1[currentLevel], window);
+            updateAllAnimation(deltaTime,player, level1[currentLevel]);
+
+            drawAll(window, player, fadeScreen, level1[currentLevel], view);
+            window.display();
         }
         else
         {
-            fadeScreen.UnFade(deltaTime);
-            if (player.GetTrap() > 0 && player.GetTrap() <= 0.1)
-            {
-                player.Freed();
-            }
+            if(timer >= 2.9){
+                window.close();}
+            else{
+                timer += deltaTime;}
+            sf::Vector2f playerCenter = player.GetPosition() + player.GetSize()/2.0f;
+            view.setCenter(playerCenter.x, playerCenter.y);//and set the view center
+            window.setView(view);
+            fadeScreen.Fade(deltaTime);
+            fadeScreen.Draw(window, view);
+            player.UpdateAnimationDeath(deltaTime);
+            player.Draw(window);
+            window.display();
+
         }
-
-
-        view_x = std::min(level1[currentLevel].GetMapSize().x-VIEW_WIDTH/2  , std::max(player.GetPosition().x, VIEW_WIDTH/2));//the view must only show the inside of a map so we set boundaries here
-        view_y = std::min(level1[currentLevel].GetMapSize().y-VIEW_HEIGHT/2, std::max(player.GetPosition().y, VIEW_HEIGHT/2));
-        view.setCenter(view_x, view_y);//and set the view center
-        window.setView(view);
-
-
-        window.clear(sf::Color(150,150,150));//we then refresh the window and redraw everything
-        updateAllMovement(deltaTime,player, level1[currentLevel]);
-        checkAllCollisions(player, direction, level1[currentLevel], window);
-        updateAllAnimation(deltaTime,player, level1[currentLevel]);
-
-        drawAll(window, player, fadeScreen, level1[currentLevel], view);
-        window.display();
     }
 
     return 0;

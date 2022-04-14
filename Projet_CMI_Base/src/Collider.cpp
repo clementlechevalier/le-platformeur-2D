@@ -223,7 +223,7 @@ sf::Vector2f Collider::Repel(Collider other, sf::Vector2f& direction)
 
         float intersectX = abs(deltaX) - (otherHalfSize.x + thisHalfSize.x);
         float intersectY = abs(deltaY) - (otherHalfSize.y + thisHalfSize.y);
-        if (intersectX < 0.0f && intersectY <= 0.0f)
+        if (intersectX < 0.0f && intersectY < 0.0f)
         {
             if (other.GetPreviousPosition().y + other.GetSize().y <= GetPosition().y)//other collide on it's bottom
             {

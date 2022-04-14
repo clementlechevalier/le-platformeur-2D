@@ -35,6 +35,7 @@ class Player : public Living_Entity
         void UpdateAnimation(float deltaTime);//Updates the player sprite depending on what he did
         void OnCollision(sf::Vector2f direction);
         void CheckCollisions(Ground platform);
+        void UpdateAnimationDeath(float deltaTime);
         void UnCollide(){m_playerColliding = false;}
 
         //GetData

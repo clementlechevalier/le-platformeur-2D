@@ -30,6 +30,7 @@ class Living_Entity
         bool IsAlive(){return (m_life > 0);}
         int GetHealth(){return m_life;}
         int GetMaxHealth(){return m_maxLife;}
+        sf::Vector2f GetSize() {return m_mainHitbox.getSize();}
         sf::Vector2f GetPosition() { return m_mainHitbox.getPosition();}
         sf::Vector2f GetDirection();
 
@@ -97,6 +98,7 @@ class Living_Entity
         int m_maxLife;
         float m_rotation;
         float m_speed;
+        float m_normalSpeed;
         float m_scale;
         float m_attackDuration;
         float m_maxAttackDuration;
